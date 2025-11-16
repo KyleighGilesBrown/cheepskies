@@ -48,6 +48,6 @@ public class ValueObject {
         customer = new Customer();
         flight = new Flight();
         customers = new ArrayList<>();
-
+//create customers?
     }
 }

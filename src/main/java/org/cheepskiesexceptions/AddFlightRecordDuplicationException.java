@@ -1,7 +1,7 @@
 package org.cheepskiesexceptions;
 
 public class AddFlightRecordDuplicationException extends FlightSchedulingException {
-    private String flightId;
+    private String flightid;
 
     public AddFlightRecordDuplicationException(String message) {
         super(message);
@@ -9,7 +9,7 @@ public class AddFlightRecordDuplicationException extends FlightSchedulingExcepti
 
     public AddFlightRecordDuplicationException(String message, String flightId) {
         super(message);
-        this.flightId = flightId;
+        this.flightid = flightid;
     }
 
     public AddFlightRecordDuplicationException(String message, Throwable cause) {
@@ -17,6 +17,6 @@ public class AddFlightRecordDuplicationException extends FlightSchedulingExcepti
     }
 
     public String getFlightId() {
-        return flightId;
+        return flightid;
     }
 }

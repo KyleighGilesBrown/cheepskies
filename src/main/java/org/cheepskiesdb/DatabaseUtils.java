@@ -5,6 +5,7 @@ import org.cheepskiesexceptions.AddToFlightListException;
 import org.cheepskiesexceptions.FlightSchedulingException;
 import org.cheepskiesexceptions.GetCustomerRecordException;
 import org.cheepskiesexceptions.LoginException;
+import org.cheepskiesexceptions.RemoveCustomerRecordException;
 
 import javax.xml.transform.Result;
 import java.sql.Connection;
@@ -52,9 +53,15 @@ public class DatabaseUtils {
         }
     }
 
+    /*
+    -Takes in ValueObject as a parameter with interchangeable flight information
+    -Returns operationResult as true IF the operation is successful
+    -Throws AddToFlightListException and FlightScheduling Exception
+     */
     public static ValueObject addFlightToCustomer(ValueObject vo)
             throws AddToFlightListException, FlightSchedulingException {
 
+        //Check if Customer and Flight are valid
         if (vo.getCustomer() == null || vo.getFlight() == null) {
             vo.operationResult = false;
             throw new AddToFlightListException("ValueObject must contain both customer and flight");
@@ -75,13 +82,14 @@ public class DatabaseUtils {
             conn = DatabaseConnector.dbConnect();
             conn.setAutoCommit(false);
 
-            // Check if flight exists
+            // Checks if flight exists
             checkFlightStmt = conn.prepareStatement(
                     "SELECT flightid FROM flights WHERE flightid = ?"
             );
             checkFlightStmt.setInt(1, flightId);
             rs = checkFlightStmt.executeQuery();
 
+            //if flight does not exist
             if (!rs.next()) {
                 vo.operationResult = false;
                 throw new FlightSchedulingException("Flight with ID " + flightId + " does not exist");
@@ -95,6 +103,7 @@ public class DatabaseUtils {
             checkCustomerStmt.setInt(1, customerId);
             rs = checkCustomerStmt.executeQuery();
 
+            //if customer does not exist
             if (!rs.next()) {
                 vo.operationResult = false;
                 throw new GetCustomerRecordException("Customer with ID " + customerId + " does not exist");
@@ -188,6 +197,52 @@ public class DatabaseUtils {
         } finally {
             closeResources(rs, checkFlightStmt, checkCustomerStmt, checkCapacityStmt,
                     checkDuplicateStmt, insertStmt, (PreparedStatement) conn);
+        }
+    }
+
+    public static ValueObject removeFlightFromCustomer(ValueObject vo)
+            throws RemoveCustomerRecordException {
+
+        if (vo.getCustomer() == null || vo.getFlight() == null) {
+            vo.operationResult = false;
+            throw new RemoveCustomerRecordException("ValueObject must contain both customer and flight");
+        }
+
+        int customerId = vo.getCustomer().getCustomerId();
+        int flightId = vo.getFlight().getFlightId();
+
+        Connection conn = null;
+        PreparedStatement deleteStmt = null;
+
+        try {
+            conn = DatabaseConnector.dbConnect();
+
+            deleteStmt = conn.prepareStatement(
+                    "DELETE FROM flight_customer WHERE flightid = ? AND customer_id = ?"
+            );
+            deleteStmt.setInt(1, flightId);
+            deleteStmt.setInt(2, customerId);
+
+            int rowsAffected = deleteStmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                vo.operationResult = false;
+                throw new RemoveCustomerRecordException(
+                        "No booking found for customer " + customerId + " on flight " + flightId
+                );
+            }
+
+            vo.operationResult = true;
+            System.out.println("Successfully removed flight " + flightId + " from customer " + customerId);
+            return vo;
+
+        } catch (SQLException e) {
+            vo.operationResult = false;
+            throw new RemoveCustomerRecordException(
+                    "Database error while removing flight from customer: " + e.getMessage()
+            );
+        } finally {
+            closeResources((ResultSet) null, deleteStmt, (PreparedStatement) conn);
         }
     }
 

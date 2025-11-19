@@ -1,10 +1,9 @@
 package org.cheepskies.bizlogic;
 
-public class BizLogic {
-    public static void main(String[] args){
+import org.cheepskies.common.ValueObject;
+import org.cheepskies.ui.Customer;
+import org.cheepskiesexceptions.*;
 
-        /*
-        Darrel was here
-         */
-    }
+public class BizLogic {
+
 }

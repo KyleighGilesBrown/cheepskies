@@ -8,6 +8,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+import org.cheepskies.common.ValueObject;
 import org.cheepskiesdb.DatabaseUtils;
 
 public class LoginController {
@@ -52,6 +53,9 @@ public class LoginController {
 
         // if any previous statement is not initialized, login is successful
         loginStatus.setText("Login successful!");
+
+        ValueObject vo = new ValueObject();
+
     }
 
     @FXML

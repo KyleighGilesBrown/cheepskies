@@ -1,6 +1,7 @@
 package org.cheepskies.ui;
 
 public class Credentials {
+
     private int credentialsId;
     private int customerId;
     private String username;

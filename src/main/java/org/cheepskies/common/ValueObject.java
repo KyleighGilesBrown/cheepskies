@@ -12,11 +12,6 @@ public class ValueObject {
     private Credentials credentials;
     private ArrayList<Customer> customers;
 
-
-    public Credentials getCredentials() {
-        return credentials;
-    }
-
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
@@ -54,9 +49,6 @@ public class ValueObject {
     public void setCustomers(ArrayList<Customer> customers) {
         this.customers = customers;
     }
-
-
-
 
     public ValueObject(){
         customer = new Customer();

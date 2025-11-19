@@ -59,7 +59,31 @@ public class Customer {
 
     }
 
+    public Customer(String firstName, String mI, String lastName, String email, int customerId) {
+        this.firstName = firstName;
+        this.mI = mI;
+        this.lastName = lastName;
+        this.email = email;
+        this.customerId = customerId;
+    }
+    /* Overriding equals so that we check if customer is comparing to same person (true), if object is null or class in not class of this object (false)
+    rest of logic allows us to populate full customer table when all search fields are empty */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Customer customer = (Customer) obj;
 
-//overide equals
+        if(!customer.firstName.isEmpty() && !firstName.equals(customer.firstName)) {
+            return false;
+        }
+        if(!customer.mI.isEmpty() && !mI.equals(customer.mI)) {
+            return false;
+        }
+        if(!customer.lastName.isEmpty() && !lastName.equals(customer.lastName)) {
+            return false;
+        }
+        return true;
+    }
 
 }

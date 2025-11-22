@@ -1,5 +1,7 @@
 package org.cheepskies.ui;
 
+import java.util.ArrayList;
+
 public class Flight {
     private String departureLocation;
     private String departureTime;
@@ -10,6 +12,8 @@ public class Flight {
     private String departureDate;
     private String price;
     public int flightId;
+
+
 
 
 
@@ -97,5 +101,32 @@ public class Flight {
     }
 
     public Flight() {
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Flight flight = (Flight) obj;
+
+        if(flight.flightId != 0 && flightId != flight.flightId) {
+            return false;
+        }
+        if(!flight.departureLocation.isEmpty() && !departureLocation.equals(flight.departureLocation)) {
+            return false;
+        }
+        if(!flight.arrivalLocation.isEmpty() && !arrivalLocation.equals(flight.arrivalLocation)) {
+            return false;
+        }
+        if(!flight.flightDuration.isEmpty() && !flightDuration.equals(flight.flightDuration)) {
+            return false;
+        }
+        if(!flight.departureDate.isEmpty() && !departureDate.equals(flight.departureDate)) {
+            return false;
+        }
+        if(price.isEmpty() && !price.equals(flight.price)) {
+            return false;
+        }
+        return true;
     }
 }

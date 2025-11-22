@@ -7,10 +7,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import org.cheepskies.common.ValueObject;
 import org.cheepskiesdb.DatabaseConnector;
 
 import java.net.URL;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class SearchPageController implements Initializable {
@@ -76,7 +78,9 @@ public class SearchPageController implements Initializable {
     private Button searchButton;
 
     @FXML
-    void removeFlightFromCustomer(MouseEvent event) {
+    void removeFlightFromCustomer(MouseEvent event) throws SQLException, ClassNotFoundException{
+        Flight flight = null;
+
 
     }
 
@@ -90,17 +94,26 @@ public class SearchPageController implements Initializable {
 
     }
 
-//    ObservableList<Flight> list = FXCollections.observableArrayList(
-//            new Flight()
-//    );
+    //ObservableList<Flight> list = FXCollections.observableArrayList(ValueObject.flights());
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        arrivallocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
-        departurelocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureLocation"));
-        flightid.setCellValueFactory(new PropertyValueFactory<Flight, String>("flightID"));
-        flightduration.setCellValueFactory(new PropertyValueFactory<Flight, String>("flightDuration"));
-        departuredate.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureDate"));
-        price.setCellValueFactory(new PropertyValueFactory<Flight, String>("price"));
+        System.out.println("Search starting... ");
+
+        try {
+
+            arrivallocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
+            departurelocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureLocation"));
+            flightid.setCellValueFactory(new PropertyValueFactory<Flight, String>("flightID"));
+            flightduration.setCellValueFactory(new PropertyValueFactory<Flight, String>("flightDuration"));
+            departuredate.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureDate"));
+            price.setCellValueFactory(new PropertyValueFactory<Flight, String>("price"));
+        }
+        catch (Exception e) {
+            System.out.println("Error while retrieving search...");
+            }
+
+        }
 
     }
 
@@ -111,4 +124,4 @@ public class SearchPageController implements Initializable {
 //
 //
 //    }
-}
+

@@ -11,6 +11,7 @@ public class ValueObject {
     private Customer customer;
     private Flight flight;
     private ArrayList<Customer> customers;
+    private ArrayList<Flight> flights;
 
     public boolean operationResult;
 
@@ -20,6 +21,14 @@ public class ValueObject {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public ArrayList<Flight> getFlights() {
+        return flights;
+    }
+
+    public void setFlights(ArrayList<Flight> flights) {
+        this.flights = flights;
     }
 
     public Customer getCustomer() {
@@ -50,6 +59,7 @@ public class ValueObject {
         customer = new Customer();
         flight = new Flight();
         customers = new ArrayList<>();
-//create customers?
+        flights = new ArrayList<>();
+
     }
 }

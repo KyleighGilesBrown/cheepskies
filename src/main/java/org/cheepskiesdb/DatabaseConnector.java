@@ -2,6 +2,7 @@ package org.cheepskiesdb;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.sql.SQLException;
 
 public class DatabaseConnector {
@@ -11,6 +12,7 @@ public class DatabaseConnector {
     private static final String user = "cis3270user";
 
     private static final String password = "Password!";
+
 
 
     public static Connection dbConnect() throws SQLException {

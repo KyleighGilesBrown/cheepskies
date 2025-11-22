@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cheepskies.ui.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#refreshTables" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cheepskies.ui.MainController">
    <children>
       <TableView fx:id="flightsTableF" layoutX="153.0" layoutY="347.0" prefHeight="200.0" prefWidth="619.0">
         <columns>
@@ -35,5 +35,6 @@
       <Button fx:id="remove" layoutX="488.0" layoutY="300.0" mnemonicParsing="false" text="Remove Flight" />
       <Button fx:id="search" layoutX="787.0" layoutY="25.0" mnemonicParsing="false" text="Search Flights" />
       <Button fx:id="logout" layoutX="29.0" layoutY="547.0" mnemonicParsing="false" text="Logout" />
+      <Button fx:id="refresh" layoutX="804.0" layoutY="547.0" mnemonicParsing="false" onMouseClicked="#refreshTables" text="Refresh" />
    </children>
 </AnchorPane>

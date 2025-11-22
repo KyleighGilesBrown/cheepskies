@@ -1,6 +1,8 @@
 package org.cheepskies.ui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -8,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+import javafx.stage.Stage;
 import org.cheepskies.common.ValueObject;
 import org.cheepskiesdb.DatabaseUtils;
 import org.cheepskies.ui.Customer;
@@ -58,10 +61,15 @@ public class LoginController {
             System.out.println(e);
         }
 
-        if (vo.operationResult) { loginStatus.setText("Login success."); }
+        Customer c = vo.getCustomer();
+
+        if (vo.operationResult) {
+            loginStatus.setText("Login success.");
+            openMainCloseLogin(c.getCustomerId());
+        }
         else { loginStatus.setText("Login failed."); }
 
-        Customer c = vo.getCustomer();
+
 
 
         /* checks if either field is empty
@@ -87,6 +95,17 @@ public class LoginController {
 
         ValueObject vo = new ValueObject();
 */
+    }
+
+    //Closes LoginApplication, opens MainApplication
+    private void openMainCloseLogin(int customerId) {
+        try {
+            MainController mainController = MainApplication.openMain();
+            mainController.setCurrentUser(customerId);
+            ((Stage) login.getScene().getWindow()).close();
+        } catch (IOException e) {
+            loginStatus.setText("Error opening main page.");
+        }
     }
 
     @FXML

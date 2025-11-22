@@ -4,6 +4,7 @@ module org.cheepskies.ui {
     requires java.sql;
     requires javafx.graphics;
     requires com.google.protobuf;
+    requires java.desktop;
 
 
     opens org.cheepskies.ui to javafx.fxml;

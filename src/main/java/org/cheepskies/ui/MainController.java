@@ -1,14 +1,23 @@
 package org.cheepskies.ui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import org.cheepskiesdb.DatabaseConnector;
+
+import javafx.scene.input.MouseEvent;
+import java.net.URL;
+import java.sql.*;
+import java.util.ResourceBundle;
 
 //Darrel
-public class MainController /*implements Initializable*/ {
+public class MainController implements Initializable {
 
     @FXML
     private Button add;
@@ -106,5 +115,148 @@ public class MainController /*implements Initializable*/ {
 
     @FXML
     private TableColumn<Flight, String> arrivalLocationF;
+
+    @FXML
+    private Button refresh;
+
+    private ObservableList<Flight> allFlights;
+    private ObservableList<Flight> userFlights;
+
+    private int currentUserId;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        System.out.println("MainController initialize started..."); //debugging stuff
+
+        try { //Calls the getter for each of these properties
+            flightIdT.setCellValueFactory(new PropertyValueFactory<>("flightId"));
+            priceT.setCellValueFactory(new PropertyValueFactory<>("price"));
+            departureDateT.setCellValueFactory(new PropertyValueFactory<>("departureDate"));
+            departureTimeT.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
+            arrivalTimeT.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+            departureLocationT.setCellValueFactory(new PropertyValueFactory<>("departureLocation"));
+            arrivalLocationT.setCellValueFactory(new PropertyValueFactory<>("arrivalLocation"));
+
+            //Calls the getter for each of these properties
+            flightIdF.setCellValueFactory(new PropertyValueFactory<>("flightId"));
+            priceF.setCellValueFactory(new PropertyValueFactory<>("price"));
+            departureDateF.setCellValueFactory(new PropertyValueFactory<>("departureDate"));
+            departureTimeF.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
+            arrivalTimeF.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+            departureLocationF.setCellValueFactory(new PropertyValueFactory<>("departureLocation"));
+            arrivalLocationF.setCellValueFactory(new PropertyValueFactory<>("arrivalLocation"));
+
+            //Real time updates between TableView and what the user sees
+            allFlights = FXCollections.observableArrayList();
+            userFlights = FXCollections.observableArrayList();
+
+
+            System.out.println("About to load flights..."); //debugging stuff
+            loadAllFlights();
+            System.out.println("MainController initialize completed."); //debugging stuff
+
+        } catch (Exception e) {
+            System.out.println("Error during MainController initialization: " + e.getMessage()); //debugging stuff
+        }
+    }
+
+    //Sets current user ID after login, and while accessing MainApplication
+    public void setCurrentUser(int userId) {
+        this.currentUserId = userId;
+        loadUserFlights();
+    }
+
+    //loads all available flights into flightTable
+    private void loadAllFlights() {
+
+        allFlights.clear(); //Prevents record duplication when refresh button is clicked
+        String query = "SELECT * FROM flights";
+
+        System.out.println("Loading all flights from database..."); //debugging stuff
+
+        //Establish DB connection and queries
+        try (Connection conn = DatabaseConnector.dbConnect();
+             PreparedStatement statement = conn.prepareStatement(query);
+             ResultSet rs = statement.executeQuery();) {
+
+
+
+            int count = 0; //debugging
+
+            //while next result is true, create flight object with fetched result
+            while (rs.next()) {
+                Flight flight = new Flight(
+                        rs.getString("departurelocation"),
+                        rs.getString("departuretime"),
+                        rs.getString("arrivallocation"),
+                        rs.getString("arrivaltime"),
+                        rs.getString("flightduration"),
+                        rs.getString("departuredate"),
+                        rs.getString("price")
+                );
+                flight.setFlightId(rs.getInt("flightid"));
+                allFlights.add(flight); //add flights to observable list
+
+                //debugging stuff
+                count++;
+                System.out.println("Loaded flight: " + flight.getFlightId() + " - " +
+                        flight.getDepartureLocation() + " to " + flight.getArrivalLocation());
+            }
+
+            System.out.println("Total flights loaded: " + count); //debugging stuff
+            flightsTable.setItems(allFlights);
+
+        } catch (SQLException e) {
+            System.out.println("Error loading flights: " + e.getMessage());
+        }
+    }
+
+    //Loads users personal flights into flightTableF
+    private void loadUserFlights() {
+
+        userFlights.clear(); //prevents flight duplication after refresh button is clicked.
+
+
+        String query = "SELECT f.* FROM flights f " +
+                "JOIN flight_customer fc ON f.flightid = fc.flightid " +
+                "WHERE fc.customer_id = " + currentUserId;
+
+        //Establish DB connection and queries
+        try (Connection conn = DatabaseConnector.dbConnect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            //while next result set is true, populate users personal flight with queried information
+            while (rs.next()) {
+                Flight flight = new Flight(
+                        rs.getString("departurelocation"),
+                        rs.getString("departuretime"),
+                        rs.getString("arrivallocation"),
+                        rs.getString("arrivaltime"),
+                        rs.getString("flightduration"),
+                        rs.getString("departuredate"),
+                        rs.getString("price")
+                );
+                flight.setFlightId(rs.getInt("flightid"));
+                userFlights.add(flight); //add flights to observable list
+            }
+            flightsTableF.setItems(userFlights); //add to flightTable TableView
+
+        } catch (SQLException e) {
+            System.out.println("Error loading user flights: " + e.getMessage());
+        }
+    }
+
+    //Refreshes tables based on click of refresh button
+    public void refreshTables(MouseEvent event) {
+        System.out.println("Refreshing tables...");
+        loadAllFlights();
+        if (currentUserId > 0) {
+            loadUserFlights();
+        }
+        System.out.println("Tables refreshed.");
+    }
+
 
 }

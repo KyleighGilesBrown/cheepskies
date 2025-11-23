@@ -15,13 +15,36 @@ public class Facade {
                 case "login":
                     vo.operationResult = bizlogic.login(vo);
                     break;
+                case "addFlight":
+                    vo.operationResult = bizlogic.addFlightToCustomer(vo);
+                    break;
+                case "removeFlight":
+                    vo.operationResult = bizlogic.removeFlightFromCustomer(vo);
+                    break;
                 case "register":
 
             }
+        } catch (LoginException e) {
+            vo.operationResult = false;
+            System.out.println("Login error: " + e.getMessage());
+        } catch (RegistrationException e) {
+            vo.operationResult = false;
+            System.out.println("Registration error: " + e.getMessage());
+        } catch (AddFlightRecordDuplicationException e) {
+            vo.operationResult = false;
+            System.out.println("Flight already added: " + e.getMessage());
+        } catch (AddToFlightListException e) {
+            vo.operationResult = false;
+            System.out.println("Error adding flight: " + e.getMessage());
+        } catch (RemoveFlightRecordException e) {
+            vo.operationResult = false;
+            System.out.println("Error removing flight: " + e.getMessage());
+        } catch (FlightSchedulingException e) {
+            vo.operationResult = false;
+            System.out.println("Flight scheduling error: " + e.getMessage());
         } catch (Exception e) {
             vo.operationResult = false;
-            System.out.println(e);
-            // NEEDS MORE
+            System.out.println("Unexpected error: " + e.getMessage());
         }
     }
 

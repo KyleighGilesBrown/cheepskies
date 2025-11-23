@@ -10,14 +10,15 @@ public class Flight {
     private String flightDuration;
     private String arrivalDate;
     private String departureDate;
-    private String price;
-    public int flightId;
+    private double price;
+    private int flightId;
 
 
 
 
 
     public int getFlightId(){
+
         return flightId;
     }
 
@@ -81,16 +82,16 @@ public class Flight {
         this.arrivalDate = arrivalDate;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
     public Flight(String departureLocation, String departureTime, String arrivalLocation,
-                  String arrivalTime, String flightDuration, String departureDate, String price) {
+                  String arrivalTime, String flightDuration, String departureDate, Double price) {
         this.departureLocation = departureLocation;
         this.departureTime = departureTime;
         this.arrivalLocation = arrivalLocation;
@@ -101,6 +102,27 @@ public class Flight {
     }
 
     public Flight() {
+    }
+
+    public Flight(String departureLocation, String departureTime, String arrivalLocation, String arrivalTime, String flightDuration, String arrivalDate, String departureDate, Double price, int flightId) {
+        this.departureLocation = departureLocation;
+        this.departureTime = departureTime;
+        this.arrivalLocation = arrivalLocation;
+        this.arrivalTime = arrivalTime;
+        this.flightDuration = flightDuration;
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+        this.price = price;
+        this.flightId = flightId;
+    }
+
+    public Flight(String arrivalLocation, String departureLocation, int flightId, Double price, String departureDate, String flightDuration) {
+        this.arrivalLocation = arrivalLocation;
+        this.departureLocation = departureLocation;
+        this.flightId = flightId;
+        this.price = price;
+        this.departureDate = departureDate;
+        this.flightDuration = flightDuration;
     }
 
     @Override
@@ -124,7 +146,7 @@ public class Flight {
         if(!flight.departureDate.isEmpty() && !departureDate.equals(flight.departureDate)) {
             return false;
         }
-        if(price.isEmpty() && !price.equals(flight.price)) {
+        if(price != 0 && price != this.price) {
             return false;
         }
         return true;

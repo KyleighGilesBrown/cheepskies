@@ -193,7 +193,7 @@ public class MainController implements Initializable {
                         rs.getString("arrivaltime"),
                         rs.getString("flightduration"),
                         rs.getString("departuredate"),
-                        rs.getString("price")
+                        rs.getDouble("price")
                 );
                 flight.setFlightId(rs.getInt("flightid"));
                 allFlights.add(flight); //add flights to observable list
@@ -236,7 +236,7 @@ public class MainController implements Initializable {
                         rs.getString("arrivaltime"),
                         rs.getString("flightduration"),
                         rs.getString("departuredate"),
-                        rs.getString("price")
+                        rs.getDouble("price")
                 );
                 flight.setFlightId(rs.getInt("flightid"));
                 userFlights.add(flight); //add flights to observable list

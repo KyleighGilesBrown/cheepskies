@@ -267,9 +267,9 @@ public class MainController implements Initializable {
 
 
     @FXML
-    //comments needed
+    //adds flights to flightsTableF when add button is pressed
     public void addFlight(MouseEvent event) {
-        Flight selectedFlight = flightsTable.getSelectionModel().getSelectedItem();
+        Flight selectedFlight = flightsTable.getSelectionModel().getSelectedItem(); //whatever flight is selected
 
         if (selectedFlight == null) {
             System.out.println("No flight selected to add.");
@@ -277,7 +277,7 @@ public class MainController implements Initializable {
         }
 
         ValueObject vo = new ValueObject();
-        vo.setAction("addFlight");
+        vo.setAction("addFlight"); //switch case from facade
         vo.setFlight(selectedFlight);
 
         Customer customer = new Customer();
@@ -285,11 +285,12 @@ public class MainController implements Initializable {
         vo.setCustomer(customer);
 
         try {
-            Facade.process(vo);
+            Facade.process(vo);//facade process is run with set flight and customer
 
+            /* boolean operation result of bizlogic.addFlightToCustomer */
             if (vo.operationResult) {
                 userFlights.add(selectedFlight);
-                System.out.println("Flight " + selectedFlight.getFlightId() + " added successfully.");
+                System.err.println("Flight " + selectedFlight.getFlightId() + " added successfully.");
             } else {
                 System.err.println("Failed to add flight.");
             }
@@ -301,9 +302,9 @@ public class MainController implements Initializable {
 
 
     @FXML
-    //comments needed
+    //removes flights from flightsTableF when remove button is pressed
     public void removeFlight(MouseEvent event) {
-        Flight selectedFlight = flightsTableF.getSelectionModel().getSelectedItem();
+        Flight selectedFlight = flightsTableF.getSelectionModel().getSelectedItem(); //whatever flight is selected
 
         if (selectedFlight == null) {
             System.out.println("No flight selected to remove.");
@@ -311,7 +312,7 @@ public class MainController implements Initializable {
         }
 
         ValueObject vo = new ValueObject();
-        vo.setAction("removeFlight");
+        vo.setAction("removeFlight"); //switch case from facade
         vo.setFlight(selectedFlight);
 
         Customer customer = new Customer();
@@ -319,10 +320,11 @@ public class MainController implements Initializable {
         vo.setCustomer(customer);
 
         try {
-            Facade.process(vo);
+            Facade.process(vo); //facade process is run with set flight and customer
 
+            //boolean operationResult of BizLogic.removeFlightFromCustomer
             if (vo.operationResult) {
-                userFlights.remove(selectedFlight);
+                userFlights.remove(selectedFlight); //removes flight from observablelist
                 System.out.println("Flight " + selectedFlight.getFlightId() + " removed successfully.");
             } else {
                 System.err.println("Failed to remove flight.");

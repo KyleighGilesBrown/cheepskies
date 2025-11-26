@@ -10,6 +10,7 @@ public class Facade {
 
     public static void process(ValueObject vo) {
 
+        //try block contains the string action for our bizlogic functions
         try {
             switch (vo.getAction()) {
                 case "login":
@@ -24,6 +25,7 @@ public class Facade {
                 case "register":
 
             }
+            // catch block contains the exceptions for our bizlogic functions
         } catch (LoginException e) {
             vo.operationResult = false;
             System.out.println("Login error: " + e.getMessage());

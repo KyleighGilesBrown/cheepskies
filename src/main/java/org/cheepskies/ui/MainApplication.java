@@ -11,7 +11,7 @@ public class MainApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(RegistrationApplication.class.getResource("/org/gui/cheepskies/main-page.fxml"));
 
         Stage stage = new Stage();
-        Scene scene = new Scene(fxmlLoader.load(), 900, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 1004, 725);
 
         stage.setTitle("Main");
         stage.setScene(scene);

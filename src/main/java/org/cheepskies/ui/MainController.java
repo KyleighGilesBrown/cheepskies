@@ -4,10 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.cheepskies.common.ValueObject;
@@ -17,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
+
 
 //Darrel
 public class MainController implements Initializable {
@@ -28,7 +26,7 @@ public class MainController implements Initializable {
     private Button remove;
 
     @FXML
-    private Button search;
+    private Button searchButton;
 
     @FXML
     private TextField flightId;
@@ -74,6 +72,80 @@ public class MainController implements Initializable {
 
     @FXML
     private TextField arrivalLocation;
+    @FXML
+    private TextField arrivalLocationTextBox;
+
+    @FXML
+    private TextField arrivalLocationTextBox1;
+    @FXML
+    private Label arriveLocationLabel;
+
+    @FXML
+    private Label arriveLocationLabel1;
+
+    @FXML
+    private Label departDateLabel;
+
+    @FXML
+    private Label departDateLabel1;
+
+    @FXML
+    private TextField departLocTextBox;
+
+    @FXML
+    private TextField departLocTextBox1;
+    @FXML
+    private TextField departureDateTextBox;
+
+    @FXML
+    private TextField departureDateTextBox1;
+
+    @FXML
+    private Label departureLocLabel;
+
+    @FXML
+    private Label departureLocLabel1;
+    @FXML
+    private Label flightDurLabel;
+
+    @FXML
+    private Label flightDurLabel1;
+
+    @FXML
+    private TextField flightDurTextBox;
+
+    @FXML
+    private TextField flightDurTextBox1;
+    @FXML
+    private Label flightIdLabel;
+
+    @FXML
+    private Label flightIdLabel1;
+    @FXML
+    private TextField flightIdTextBox;
+
+    @FXML
+    private TextField flightIdTextBox1;
+    @FXML
+    private Label priceLabel;
+
+    @FXML
+    private Label priceLabel1;
+    @FXML
+    private TextField priceTextBox;
+
+    @FXML
+    private TextField priceTextBox1;
+    @FXML
+    private Label searchALLFLabel;
+    @FXML
+    private Button searchButton1;
+
+    @FXML
+    private Button searchButton2;
+
+    @FXML
+    private Label searchCustFLabel;
 
     @FXML
     private TableColumn<Flight, String> arrivalLocationT;
@@ -353,6 +425,15 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error during logout: " + e.getMessage());
         }
+    }
+
+    @FXML
+    void searchFlights(MouseEvent event) {
+
+    }
+    @FXML
+    void goToSearchPage(MouseEvent event) {
+
     }
 
 

@@ -24,8 +24,8 @@ public class Facade {
                     break;
                 case "register":
                 //missing logic
-                case "searchFlight":
-                    vo.operationResult = bizlogic.searchFlights(vo);
+//                case "searchFlightCustomer":
+//                    vo.operationResult = bizlogic.searchFlightsAsCustomer(vo);
             }
             // catch block contains the exceptions for our bizlogic functions
         } catch (LoginException e) {

@@ -69,4 +69,9 @@ public class BizLogic {
 
         return true;
     }
+
+//    public boolean searchFlightsAsCustomer(ValueObject vo) {
+//
+//
+//    }
 }

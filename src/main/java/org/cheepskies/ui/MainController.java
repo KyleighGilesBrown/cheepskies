@@ -18,6 +18,8 @@ import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -433,8 +435,145 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    void searchFlights(MouseEvent event) {
+    void searchFlights1(MouseEvent event) {
+            try {
+                // Get user input from text fields
+                String flightId = flightIdTextBox.getText().trim();
+                String departLoc = departLocTextBox.getText().trim();
+                String arrivalLoc = arrivalLocationTextBox.getText().trim();
+                String departDate = departureDateTextBox.getText().trim();
+                String flightDur = flightDurTextBox.getText().trim();
+                String priceStr = priceTextBox.getText().trim();
 
+                // Build the SQL query dynamically with placeholders
+                StringBuilder query = new StringBuilder("SELECT * FROM flights WHERE 1=1");
+                List<String> parameters = new ArrayList<>();
+// is this the same as equals I have already overridden
+                if (!flightId.isEmpty()) {
+                    query.append(" AND flightId = ?");
+                    parameters.add(flightId);
+                }
+                if (!departLoc.isEmpty()) {
+                    query.append(" AND departureLocation = ?");
+                    parameters.add(departLoc);
+                }
+                if (!arrivalLoc.isEmpty()) {
+                    query.append(" AND arrivalLocation = ?");
+                    parameters.add(arrivalLoc);
+                }
+                if (!departDate.isEmpty()) {
+                    query.append(" AND departureDate = ?");
+                    parameters.add(departDate);
+                }
+                if (!flightDur.isEmpty()) {
+                    query.append(" AND flightDuration = ?");
+                    parameters.add(flightDur);
+                }
+                if (!priceStr.isEmpty()) {
+                    query.append(" AND price = ?");
+                    parameters.add(priceStr);
+                }
+
+
+                DatabaseConnector db = new DatabaseConnector();
+
+                // Execute the query with parameters
+                ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
+
+                // Create a list to hold the results
+                ObservableList<Flight> flightList = FXCollections.observableArrayList();
+
+                // Loop through results and create Flight objects
+                while (rs.next()) {
+                    Flight flight = new Flight(
+                            rs.getString("arrivalLocation"),
+                            rs.getString("departureLocation"),
+                            rs.getInt("flightId"),
+                            rs.getDouble("price"),
+                            rs.getString("departureDate"),
+                            rs.getString("flightDuration")
+                    );
+                    flightList.add(flight);
+                }
+
+                // Display results in the table
+                flightsTable.setItems(flightList);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Consider showing an error alert to the user
+            }
+        }
+
+    @FXML
+    void searchFlights2(MouseEvent event) {
+        try {
+            // Get user input from text fields
+            String flightId = flightIdTextBox.getText().trim();
+            String departLoc = departLocTextBox.getText().trim();
+            String arrivalLoc = arrivalLocationTextBox.getText().trim();
+            String departDate = departureDateTextBox.getText().trim();
+            String flightDur = flightDurTextBox.getText().trim();
+            String priceStr = priceTextBox.getText().trim();
+
+            // Build the SQL query dynamically with placeholders
+            StringBuilder query = new StringBuilder("SELECT * FROM flight_customer WHERE 1=1");
+            List<String> parameters = new ArrayList<>();
+// is this the same as equals I have already overridden
+            if (!flightId.isEmpty()) {
+                query.append(" AND flightId = ?");
+                parameters.add(flightId);
+            }
+            if (!departLoc.isEmpty()) {
+                query.append(" AND departureLocation = ?");
+                parameters.add(departLoc);
+            }
+            if (!arrivalLoc.isEmpty()) {
+                query.append(" AND arrivalLocation = ?");
+                parameters.add(arrivalLoc);
+            }
+            if (!departDate.isEmpty()) {
+                query.append(" AND departureDate = ?");
+                parameters.add(departDate);
+            }
+            if (!flightDur.isEmpty()) {
+                query.append(" AND flightDuration = ?");
+                parameters.add(flightDur);
+            }
+            if (!priceStr.isEmpty()) {
+                query.append(" AND price = ?");
+                parameters.add(priceStr);
+            }
+
+
+            DatabaseConnector db = new DatabaseConnector();
+
+            // Execute the query with parameters
+            ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
+
+            // Create a list to hold the results
+            ObservableList<Flight> flightList = FXCollections.observableArrayList();
+
+            // Loop through results and create Flight objects
+            while (rs.next()) {
+                Flight flight = new Flight(
+                        rs.getString("arrivalLocation"),
+                        rs.getString("departureLocation"),
+                        rs.getInt("flightId"),
+                        rs.getDouble("price"),
+                        rs.getString("departureDate"),
+                        rs.getString("flightDuration")
+                );
+                flightList.add(flight);
+            }
+
+            // Display results in the table
+            flightsTableF.setItems(flightList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Consider showing an error alert to the user
+        }
     }
     @FXML
     void goToAdminPageClick(MouseEvent event) {

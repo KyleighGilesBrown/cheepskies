@@ -1,6 +1,6 @@
 package org.cheepskies.ui;
 
-public class Customer extends User {
+public abstract class User {
 
     // Credential table information
     private String username;
@@ -31,7 +31,7 @@ public class Customer extends User {
         return credentialId;
     }
 
-    public Customer(int customerId, String firstName, String mI, String lastName, String email){
+    public User(int customerId, String firstName, String mI, String lastName, String email){
         this.firstName = firstName;
         this.mI = mI;
         this.lastName = lastName;
@@ -80,15 +80,14 @@ public class Customer extends User {
     }
 
     // Customer table constructors
-    public Customer() {
+    public User() {
     }
 
-    public Customer(String firstName, String mI, String lastName, String email, int customerId) {
+    public User(String firstName, String mI, String lastName, String email, int customerId) {
         this.firstName = firstName;
         this.mI = mI;
         this.lastName = lastName;
         this.email = email;
         this.customerId = customerId;
     }
-
 }

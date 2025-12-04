@@ -1,7 +1,9 @@
 package org.cheepskies.ui;
-//extends customer because admin has more permissions that customer
-public class Admin extends Customer {
+//extends User, admin has more permissions than customer
+public class Admin extends User {
     /*
+
+    Preston
     - permissions:
         - all permissions given to customer must also be given to Admin
         - admin can add flights to their account (as if they are flying like customer)

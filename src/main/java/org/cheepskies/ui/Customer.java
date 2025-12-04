@@ -27,7 +27,11 @@ public class Customer {
     private String email;
     private int customerId;
 
-    public Customer(int customerId, String firstName,String mI, String lastName, String email){
+    public String getCredentialId() {
+        return credentialId;
+    }
+
+    public Customer(int customerId, String firstName, String mI, String lastName, String email){
         this.firstName = firstName;
         this.mI = mI;
         this.lastName = lastName;

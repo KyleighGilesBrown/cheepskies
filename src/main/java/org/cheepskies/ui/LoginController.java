@@ -1,8 +1,6 @@
 package org.cheepskies.ui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -12,8 +10,6 @@ import java.io.IOException;
 
 import javafx.stage.Stage;
 import org.cheepskies.common.ValueObject;
-import org.cheepskiesdb.DatabaseUtils;
-import org.cheepskies.ui.Customer;
 
 public class LoginController {
 //fix to one customer obj

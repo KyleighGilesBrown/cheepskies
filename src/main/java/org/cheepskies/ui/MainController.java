@@ -9,11 +9,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.cheepskies.common.ValueObject;
 import org.cheepskiesdb.DatabaseConnector;
-
-import javafx.scene.input.MouseEvent;
+import org.cheepskiesdb.DatabaseUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static org.cheepskiesdb.DatabaseConnector.dbConnect;
 
-//Darrel
 public class MainController implements Initializable {
 
     @FXML
@@ -243,8 +243,11 @@ public class MainController implements Initializable {
 
     //Sets current user ID after login, and while accessing MainApplication
     public void setCurrentUser(int userId) {
+        System.out.println("DEBUG: setCurrentUser called with userId = " + userId);
         this.currentUserId = userId;
         loadUserFlights();
+        System.out.println("DEBUG: User flights loaded, count = " + userFlights.size());
+
     }
 
 
@@ -257,10 +260,9 @@ public class MainController implements Initializable {
         System.out.println("Loading all flights from database..."); //debugging stuff
 
         //Establish DB connection and queries
-        try (Connection conn = DatabaseConnector.dbConnect();
+        try (Connection conn = dbConnect();
              PreparedStatement statement = conn.prepareStatement(query);
              ResultSet rs = statement.executeQuery();) {
-
 
 
             int count = 0; //debugging
@@ -305,7 +307,7 @@ public class MainController implements Initializable {
                 "WHERE fc.customer_id = " + currentUserId;
 
         //Establish DB connection and queries
-        try (Connection conn = DatabaseConnector.dbConnect();
+        try (Connection conn = dbConnect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
@@ -352,6 +354,8 @@ public class MainController implements Initializable {
             System.out.println("No flight selected to add.");
             return;
         }
+// DEBUG: Check what currentUserId is
+        System.out.println("DEBUG: currentUserId = " + currentUserId);
 
         ValueObject vo = new ValueObject();
         vo.setAction("addFlight"); //switch case from facade
@@ -423,191 +427,177 @@ public class MainController implements Initializable {
             // Close current main page
             Stage currentStage = (Stage) logout.getScene().getWindow();
             currentStage.close();
-
             System.out.println("User logged out successfully.");
 
         } catch (Exception e) {
             System.err.println("Error during logout: " + e.getMessage());
         }
     }
-//first table search button on main menu
+
+    //first table search button on main menu
     @FXML
     void searchFlights1(MouseEvent event) {
-            try {
-                // Get user input from text fields
-                String flightId = flightIdTextBox.getText().trim();
-                String departLoc = departLocTextBox.getText().trim();
-                String arrivalLoc = arrivalLocationTextBox.getText().trim();
-                String departDate = departureDateTextBox.getText().trim();
-                String flightDur = flightDurTextBox.getText().trim();
-                String priceStr = priceTextBox.getText().trim();
+    // Getting user input from text fields
+        String flightIdStr = flightIdTextBox.getText().trim();
+        String departLoc = departLocTextBox.getText().trim();
+        String arrivalLoc = arrivalLocationTextBox.getText().trim();
+        String departDate = departureDateTextBox.getText().trim();
+        String flightDur = flightDurTextBox.getText().trim();
+        String priceStr = priceTextBox.getText().trim();
 
-                // Build the SQL query dynamically with placeholders
-                StringBuilder query = new StringBuilder("SELECT * FROM flights WHERE 1=1");
-                List<String> parameters = new ArrayList<>();
+        ValueObject vo = new ValueObject();
+        vo.setAction("searchFlight"); //switch case from facade
 
-                //idk how to use Vo and equals and facade
-                ValueObject vo = new ValueObject();
-                vo.setAction("searchFlightCustomer"); //switch case from facade
+        try {
 
-                Customer customer = new Customer();
-                customer.setCustomerId(currentUserId);
-                vo.setCustomer(customer);
-                // guessing and should prob delete above 5 lines
+            //gets returned flights from db utils and puts it in arraylist "flights"
+            ArrayList<Flight> flights = DatabaseUtils.searchAllFlights(flightIdStr, departLoc, arrivalLoc, departDate, flightDur, priceStr);
+            //get flights and store in vo
+            vo.setFlights(flights);
+            //pass vo with flights to facade for exception handling
+            Facade.process(vo);
+            // Created list to display the results once facade is passable
+            ObservableList<Flight> flightList = FXCollections.observableArrayList(flights);
+            // Display results in the 1st table
+            flightsTable.setItems(flightList);
 
-
-// is this the same as equals I have already overridden in Customer class?
-                if (!flightId.isEmpty()) {
-                    query.append(" AND flightId = ?");
-                    parameters.add(flightId);
-                }
-                if (!departLoc.isEmpty()) {
-                    query.append(" AND departureLocation = ?");
-                    parameters.add(departLoc);
-                }
-                if (!arrivalLoc.isEmpty()) {
-                    query.append(" AND arrivalLocation = ?");
-                    parameters.add(arrivalLoc);
-                }
-                if (!departDate.isEmpty()) {
-                    query.append(" AND departureDate = ?");
-                    parameters.add(departDate);
-                }
-                if (!flightDur.isEmpty()) {
-                    query.append(" AND flightDuration = ?");
-                    parameters.add(flightDur);
-                }
-                if (!priceStr.isEmpty()) {
-                    query.append(" AND price = ?");
-                    parameters.add(priceStr);
-                }
-
-
-
-                DatabaseConnector db = new DatabaseConnector();
-
-                // Execute the query with parameters
-                ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
-
-                // Create a list to hold the results
-                ObservableList<Flight> flightList = FXCollections.observableArrayList();
-
-                // Loop through results and create Flight objects
-                while (rs.next()) {
-                    Flight flight = new Flight(
-                            rs.getString("arrivalLocation"),
-                            rs.getString("departureLocation"),
-                            rs.getInt("flightId"),
-                            rs.getDouble("price"),
-                            rs.getString("departureDate"),
-                            rs.getString("flightDuration")
-                    );
-                    flightList.add(flight);
-                }
-
-                // Display results in the table
-                flightsTable.setItems(flightList);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Consider showing an error alert to the user
-            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
+    }
 //second table search button on main menu
     @FXML
     void searchFlights2(MouseEvent event) {
+//        try {
+//            // Get user input from text fields
+//            String flightId = flightIdTextBox1.getText().trim();
+//            String departLoc = departLocTextBox1.getText().trim();
+//            String arrivalLoc = arrivalLocationTextBox1.getText().trim();
+//            String departDate = departureDateTextBox1.getText().trim();
+//            String flightDur = flightDurTextBox1.getText().trim();
+//            String priceStr = priceTextBox1.getText().trim();
+//
+//            // Building the SQL query dynamically with placeholders
+//            StringBuilder query = new StringBuilder("SELECT f.* FROM flights f " +
+//                    "JOIN flight_customer fc ON f.flightid = fc.flightid " +
+//                    "WHERE fc.customer_id = " + currentUserId);
+//
+//            List<String> parameters = new ArrayList<>();
+//
+////            Flight flight = new Flight(arrivalLoc, departLoc, flightId, priceStr, departDate, flightDur); ???
+//            if (!flightId.isEmpty()) {
+//                query.append(" AND f.flightid = ?");
+//                parameters.add(flightId);
+//            }
+//            if (!departLoc.isEmpty()) {
+//                query.append(" AND f.departurelocation = ?");
+//                parameters.add(departLoc);
+//            }
+//            if (!arrivalLoc.isEmpty()) {
+//                query.append(" AND f.arrivallocation = ?");
+//                parameters.add(arrivalLoc);
+//            }
+//            if (!departDate.isEmpty()) {
+//                query.append(" AND f.departuredate = ?");
+//                parameters.add(departDate);
+//            }
+//            if (!flightDur.isEmpty()) {
+//                query.append(" AND f.flightduration = ?");
+//                parameters.add(flightDur);
+//            }
+//            if (!priceStr.isEmpty()) {
+//                query.append(" AND f.price = ?");
+//                parameters.add(priceStr);
+//            }
+
+//            ValueObject vo = new ValueObject();
+//            Customer customer = new Customer();
+//
+//            customer.setCustomerId(currentUserId);
+//            vo.setCustomer(customer);
+//
+//            DatabaseConnector db = new DatabaseConnector();
+//
+//            // Execute the query with parameters
+//            ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
+//
+//            // Create a list to hold the results
+//            ObservableList<Flight> flightList = FXCollections.observableArrayList();
+//
+//            // Loop through results and create Flight objects
+//            while (rs.next()) {
+//                Flight flight = new Flight(
+//                        rs.getString("departurelocation"),
+//                        rs.getString("departuretime"),
+//                        rs.getString("arrivallocation"),
+//                        rs.getString("arrivaltime"),
+//                        rs.getString("flightduration"),
+//                        rs.getString("departuredate"),
+//                        rs.getDouble("price")
+//                );
+//                flight.setFlightId(rs.getInt("flightid"));
+//                flightList.add(flight);
+//
+//            }
+//
+//            // Display results in the table
+//            flightsTableF.setItems(flightList);
+//
+//        } catch (Exception e) {
+//           e.printStackTrace();
+        ValueObject vo = new ValueObject();
+        vo.setAction("searchFlight"); //switch case from facade
+
+
+        Customer customer = new Customer();
+        customer.setCustomerId(currentUserId);
+        vo.setCustomer(customer);
+        loadUserFlights();
+
+        String flightIdStr = flightIdTextBox1.getText().trim();
+        String departLoc = departLocTextBox1.getText().trim();
+        String arrivalLoc = arrivalLocationTextBox1.getText().trim();
+        String departDate = departureDateTextBox1.getText().trim();
+        String flightDur = flightDurTextBox1.getText().trim();
+        String priceStr = priceTextBox1.getText().trim();
+
+        vo.setAction("searchFlight"); //switch case from facade
+
         try {
-            // Get user input from text fields
-            String flightId = flightIdTextBox1.getText().trim();
-            String departLoc = departLocTextBox1.getText().trim();
-            String arrivalLoc = arrivalLocationTextBox1.getText().trim();
-            String departDate = departureDateTextBox1.getText().trim();
-            String flightDur = flightDurTextBox1.getText().trim();
-            String priceStr = priceTextBox1.getText().trim();
 
-            // Building the SQL query dynamically with placeholders
-            StringBuilder query = new StringBuilder("SELECT f.* FROM flights f " +
-                    "JOIN flight_customer fc ON f.flightid = fc.flightid " +
-                    "WHERE fc.customer_id = " + currentUserId);
-
-            List<String> parameters = new ArrayList<>();
-
-//            Flight flight = new Flight(arrivalLoc, departLoc, flightId, priceStr, departDate, flightDur); ???
-// is this the same as equals I have already overridden???
-            if (!flightId.isEmpty()) {
-                query.append(" AND f.flightid = ?");
-                parameters.add(flightId);
-            }
-            if (!departLoc.isEmpty()) {
-                query.append(" AND f.departurelocation = ?");
-                parameters.add(departLoc);
-            }
-            if (!arrivalLoc.isEmpty()) {
-                query.append(" AND f.arrivallocation = ?");
-                parameters.add(arrivalLoc);
-            }
-            if (!departDate.isEmpty()) {
-                query.append(" AND f.departuredate = ?");
-                parameters.add(departDate);
-            }
-            if (!flightDur.isEmpty()) {
-                query.append(" AND f.flightduration = ?");
-                parameters.add(flightDur);
-            }
-            if (!priceStr.isEmpty()) {
-                query.append(" AND f.price = ?");
-                parameters.add(priceStr);
-            }
-
-
-            DatabaseConnector db = new DatabaseConnector();
-
-            // Execute the query with parameters
-            ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
-
-            // Create a list to hold the results
-            ObservableList<Flight> flightList = FXCollections.observableArrayList();
-
-            // Loop through results and create Flight objects
-            while (rs.next()) {
-                Flight flight = new Flight(
-                        rs.getString("departurelocation"),
-                        rs.getString("departuretime"),
-                        rs.getString("arrivallocation"),
-                        rs.getString("arrivaltime"),
-                        rs.getString("flightduration"),
-                        rs.getString("departuredate"),
-                        rs.getDouble("price")
-                );
-                flight.setFlightId(rs.getInt("flightid"));
-                flightList.add(flight);
-
-            }
-
-            // Display results in the table
+            //gets returned flights from db utils and puts it in arraylist "flights"
+            ArrayList<Flight> flights = DatabaseUtils.searchCustomerFlights(flightIdStr, departLoc, arrivalLoc, departDate, flightDur, priceStr, customer.getCustomerId());
+            //get flights and store in vo
+            vo.setFlights(flights);
+            //pass vo with flights to facade for exception handling
+            Facade.process(vo);
+            // Created list to display the results once facade is passable
+            ObservableList<Flight> flightList = FXCollections.observableArrayList(flights);
+            // Display results in the 1st table
             flightsTableF.setItems(flightList);
 
         } catch (Exception e) {
-           e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
         }
-    }
-
-    //MUST ONLY BE EITHER VISIBLE AND ACCESSIBLE BY ADMIN
-    @FXML
-    void goToAdminPageClick(MouseEvent event) {
-        try {
-            // Loading the new FXML file
-            Parent newPage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/gui/cheepskies/admin-page.fxml")));
-            // Getting the current stage
-            Stage stage = (Stage) toAdminPageButton.getScene().getWindow();
-
-            // Setting the new scene
-            Scene scene = new Scene(newPage);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
+@FXML
+void goToAdminPageClick(MouseEvent event) {
 
-}
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/gui/cheepskies/admin-page.fxml"));
+        Parent newPage = loader.load();
+
+        // Get the admin controller and pass the current user ID
+        AdminController adminController = loader.getController();
+        adminController.setCurrentUserId(currentUserId); // Pass the user ID
+
+        Stage stage = (Stage) toAdminPageButton.getScene().getWindow();
+        // Setting the new scene
+        Scene scene = new Scene(newPage);
+        stage.setScene(scene);
+        stage.show();
+    } catch (IOException e) {
+        System.out.println(e.getMessage());
+    }
+}}
+

@@ -82,8 +82,15 @@ public class Flight {
         this.arrivalDate = arrivalDate;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
+    }
+
+    public String getStrPrice() {
+        return Double.toString(price);
+    }
+    public String getStrFlightId() {
+        return Integer.toString(flightId);
     }
 
     public void setPrice(Double price) {

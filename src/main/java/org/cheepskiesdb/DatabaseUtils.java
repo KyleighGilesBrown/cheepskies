@@ -2,11 +2,14 @@ package org.cheepskiesdb;
 
 import org.cheepskies.common.ValueObject;
 import org.cheepskies.ui.Customer;
+import org.cheepskies.ui.Flight;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseUtils {
 
@@ -267,6 +270,179 @@ public class DatabaseUtils {
         return false;
 
     }
+
+    public static ArrayList<Flight> searchAllFlights(String flightIdStr, String departLoc, String arrivalLoc, String departDate, String flightDur, String priceStr) {
+        ArrayList<Flight> flightsReturn = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM flights WHERE 1=1");
+//dynamically building query to check for empty textboxes. Shows all flights if all are empty since no appending to statement happens.
+
+        //using incremental index incase not all textboxes have input (index starts at 1, then ends at value = to number of inputs)
+        int index = 1;
+//establishing db connection, using connection to create empty prepared statement. (.toString() from StringBuilder(dynamic String))
+
+            //index using post-increment so it starts at 1, then increments to 2 for next usage and so on...
+            if (!flightIdStr.isEmpty()) {
+                query.append(" AND flightid = ?");
+            }
+            if (!departLoc.isEmpty()) {
+                query.append(" AND departurelocation = ?");
+            }
+            if (!arrivalLoc.isEmpty()) {
+                query.append(" AND arrivallocation = ?");
+
+            }
+            if (!departDate.isEmpty()) {
+                query.append(" AND departuredate = ?");
+
+            }
+            if (!flightDur.isEmpty()) {
+                query.append(" AND flightduration = ?");
+
+            }
+            if (!priceStr.isEmpty()) {
+                query.append(" AND price = ?");
+
+            }
+            //need to set up prepared statement after building query above
+        try (Connection conn = DatabaseConnector.dbConnect();
+             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+            //index using post-increment so it starts at 1, then increments to 2 for next usage and so on...
+            if (!flightIdStr.isEmpty()) {
+                statement.setString(index++, flightIdStr);
+            }
+            if (!departLoc.isEmpty()) {
+                statement.setString(index++, departLoc);
+            }
+            if (!arrivalLoc.isEmpty()) {
+                statement.setString(index++, arrivalLoc);
+
+            }
+            if (!departDate.isEmpty()) {
+                statement.setString(index++, departDate);
+
+            }
+            if (!flightDur.isEmpty()) {
+                statement.setString(index++, flightDur);
+
+            }
+            if (!priceStr.isEmpty()) {
+                statement.setString(index++, priceStr);
+            }
+
+//executes query, temp stores in result set to view table of data
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Flight flight = new Flight(
+                        rs.getString("departurelocation"),
+                        rs.getString("departuretime"),
+                        rs.getString("arrivallocation"),
+                        rs.getString("arrivaltime"),
+                        rs.getString("flightduration"),
+                        rs.getString("departuredate"),
+                        rs.getDouble("price")
+                );
+                flight.setFlightId(rs.getInt("flightid"));
+                flightsReturn.add(flight);
+            }
+            return flightsReturn;
+        } catch (SQLException e) {
+            System.out.println("SQL error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return flightsReturn;
+    }
+
+    public static ArrayList<Flight> searchCustomerFlights(String flightIdStr, String departLoc, String arrivalLoc, String departDate, String flightDur, String priceStr, int customerId) {
+        ArrayList<Flight> flightsReturn = new ArrayList<>();
+        //query specific per user, shows only that customer's booked flights
+        StringBuilder query = new StringBuilder("SELECT f.* FROM flights f " +
+                "JOIN flight_customer fc ON f.flightid = fc.flightid " +
+                "WHERE fc.customer_id = ?");
+
+
+//dynamically building query to check for empty textboxes. Shows all flights if all are empty since no appending to statement happens.
+        //index using post-increment so it starts at 1, then increments to 2 for next usage and so on...
+        if (!flightIdStr.isEmpty()) {
+            query.append(" AND f.flightid = ?");
+        }
+        if (!departLoc.isEmpty()) {
+            query.append(" AND f.departurelocation = ?");
+        }
+        if (!arrivalLoc.isEmpty()) {
+            query.append(" AND f.arrivallocation = ?");
+
+        }
+        if (!departDate.isEmpty()) {
+            query.append(" AND f.departuredate = ?");
+
+        }
+        if (!flightDur.isEmpty()) {
+            query.append(" AND f.flightduration = ?");
+
+        }
+        if (!priceStr.isEmpty()) {
+            query.append(" AND f.price = ?");
+
+        }
+        //establishing db connection, using connection to create empty prepared statement. (.toString() from StringBuilder(dynamic String))
+        //need to set up prepared statement after building query above
+        try (Connection conn = DatabaseConnector.dbConnect();
+             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+            //index using post-increment so it starts at 1, then increments to 2 for next usage and so on...
+            //using incremental index incase not all textboxes have input (index starts at 1, then ends at value = to number of inputs)
+            int index = 1;
+            statement.setInt(index++, customerId);
+            if (!flightIdStr.isEmpty()) {
+                statement.setString(index++, flightIdStr);
+            }
+            if (!departLoc.isEmpty()) {
+                statement.setString(index++, departLoc);
+            }
+            if (!arrivalLoc.isEmpty()) {
+                statement.setString(index++, arrivalLoc);
+
+            }
+            if (!departDate.isEmpty()) {
+                statement.setString(index++, departDate);
+
+            }
+            if (!flightDur.isEmpty()) {
+                statement.setString(index++, flightDur);
+
+            }
+            if (!priceStr.isEmpty()) {
+                statement.setString(index++, priceStr);
+            }
+
+//executes query, temp stores in result set to view table of data
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Flight flight = new Flight(
+                        rs.getString("departurelocation"),
+                        rs.getString("departuretime"),
+                        rs.getString("arrivallocation"),
+                        rs.getString("arrivaltime"),
+                        rs.getString("flightduration"),
+                        rs.getString("departuredate"),
+                        rs.getDouble("price")
+                );
+                // added seperately using setFlightId
+                flight.setFlightId(rs.getInt("flightid"));
+                //adds completed flight to list
+                flightsReturn.add(flight);
+            }
+            return flightsReturn;
+        } catch (SQLException e) {
+            System.out.println("SQL error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return flightsReturn;
+    }
+
 
 
 }

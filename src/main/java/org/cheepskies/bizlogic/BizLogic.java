@@ -3,6 +3,7 @@ package org.cheepskies.bizlogic;
 import org.cheepskies.common.ValueObject;
 import org.cheepskies.ui.Customer;
 import org.cheepskies.ui.Flight;
+import org.cheepskies.ui.MainController;
 import org.cheepskiesdb.DatabaseUtils;
 import org.cheepskiesexceptions.*;
 
@@ -73,11 +74,22 @@ public class BizLogic {
 
         return true;
     }
-    //do i even need this??
-//    public boolean searchFlightsAsCustomer(ValueObject vo) throws SQLException {
-//
-//
-//    }
+//generic all search button functionality
+    public boolean searchFlights(ValueObject vo) throws SQLException {
+        Flight flight = vo.getFlight();
+        Customer customer;
+        customer = vo.getCustomer();
+
+        if(DatabaseUtils.searchAllFlights(flight.getStrFlightId(), flight.getDepartureLocation(), flight.getArrivalLocation(), flight.getDepartureDate(), flight.getFlightDuration(), flight.getStrPrice()) == null) {
+            throw new SQLException("Failed to retrieve flights from search.");
+        }
+        if(DatabaseUtils.searchCustomerFlights(flight.getStrFlightId(), flight.getDepartureLocation(), flight.getArrivalLocation(), flight.getDepartureDate(), flight.getFlightDuration(), flight.getStrPrice(), customer.getCustomerId()) == null) {
+            throw new SQLException("Failed to retrieve flights from search.");
+        }
+        //if does not throw SQLException, result set is not empty and can proceed.
+        return true;
+
+    }
 
     public boolean adminAddFlight(ValueObject vo) throws AddNewFlightException {
         Flight flight = vo.getFlight();

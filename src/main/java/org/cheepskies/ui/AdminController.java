@@ -108,13 +108,23 @@ public class AdminController implements Initializable {
     void removeFlightFromCustomer(MouseEvent event) throws SQLException, ClassNotFoundException{
 
     }
+    private int currentUserId;
 
+    public void setCurrentUserId(int userId) {
+        this.currentUserId = userId;
+        System.out.println("DEBUG: AdminController received userId = " + userId);
+    }
     @FXML
     void returnToMainMenu(MouseEvent event) {
+
         try {
-            // Loading the new FXML file
-            Parent newPage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/gui/cheepskies/main-page.fxml")));
-            // Getting the current stage
+            //FXMLLoader get access of the controller
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/gui/cheepskies/main-page.fxml"));
+            Parent newPage = loader.load();
+
+            // Get the main controller and set the user ID
+            MainController mainController = loader.getController();
+            mainController.setCurrentUser(currentUserId); // Restore the user ID            // Getting the current stage
             Stage stage = (Stage) toMainMenuButton.getScene().getWindow();
 
             // Setting the new scene
@@ -122,7 +132,7 @@ public class AdminController implements Initializable {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 

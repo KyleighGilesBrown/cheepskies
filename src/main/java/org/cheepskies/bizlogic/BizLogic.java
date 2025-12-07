@@ -93,25 +93,49 @@ public class BizLogic {
 
     }
 
-    public boolean adminAddFlight(ValueObject vo) throws AddNewFlightException, SQLException {
+    public boolean adminAddFlight(ValueObject vo) throws AddNewFlightException {
 
         Flight flight = vo.getFlight();
 
        boolean ok = DatabaseUtils.addFlight(flight);
-       if (ok) {
 
+       if (ok) {
            vo.setAction("add_success");
            vo.operationResult = true;
            System.out.println("Flight added successfully with ID: " + flight.getFlightId());
            return true;
-
        } else {
            throw new AddNewFlightException("Flight addition failed.");
        }
     }
 
-    public boolean updateFlight(ValueObject vo) throws UpdateFlightException {
-        return true;
+    public boolean adminUpdateFlight(ValueObject vo) throws UpdateFlightAsAdminException {
+        Flight flight = vo.getFlight();
+
+        boolean ok = DatabaseUtils.updateFlight(flight);
+
+        if (ok) {
+            vo.setAction("flight_updated");
+            vo.operationResult = true;
+            return true;
+        } else {
+            throw new UpdateFlightAsAdminException("Could not update flight");
+        }
+
+    }
+
+    public boolean adminRemoveFlight(ValueObject vo) throws RemoveFlightAsAdminException {
+        Flight flight = vo.getFlight();
+
+        boolean ok = DatabaseUtils.removeFlight(flight.getFlightId());
+
+        if (ok) {
+            vo.operationResult = true;
+            vo.setAction("flight_removed");
+            return true;
+        } else {
+            throw new RemoveFlightAsAdminException("Could not remove flight");
+        }
     }
 
     public boolean register(ValueObject vo) throws RegistrationException {

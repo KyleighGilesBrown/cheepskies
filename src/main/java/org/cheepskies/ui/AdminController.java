@@ -60,6 +60,9 @@ public class AdminController implements Initializable {
     private TableColumn<Flight, String> arrivallocation;
 
     @FXML
+    private TableColumn<Flight, String> arrivaltime;
+
+    @FXML
     private Label arriveLocationLabel;
 
     @FXML
@@ -79,6 +82,9 @@ public class AdminController implements Initializable {
 
     @FXML
     private TableColumn<Flight, String> departurelocation;
+
+    @FXML
+    private TableColumn<Flight, String> departuretime;
 
     @FXML
     private Label flightDurLabel;
@@ -144,28 +150,37 @@ public class AdminController implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Search starting... ");
+        System.out.println("AdminController initialize started...");
 
         try {
+            // Match column names EXACTLY to the Flight getters
 
-            arrivallocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
-            departurelocation.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureLocation"));
-            flightid.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("flightId"));
-            flightduration.setCellValueFactory(new PropertyValueFactory<Flight, String>("flightDuration"));
-            departuredate.setCellValueFactory(new PropertyValueFactory<Flight, String>("departureDate"));
-            price.setCellValueFactory(new PropertyValueFactory<Flight, String>("price"));
+            flightid.setCellValueFactory(new PropertyValueFactory<>("flightId"));
+            price.setCellValueFactory(new PropertyValueFactory<>("price"));
+            departuredate.setCellValueFactory(new PropertyValueFactory<>("departureDate"));
+            departurelocation.setCellValueFactory(new PropertyValueFactory<>("departureLocation"));
+            arrivallocation.setCellValueFactory(new PropertyValueFactory<>("arrivalLocation"));
+            flightduration.setCellValueFactory(new PropertyValueFactory<>("flightDuration"));
+            departuretime.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
+            arrivaltime.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+
             allFlights = FXCollections.observableArrayList();
+
             loadAllFlights();
 
-        }
-        catch (Exception e) {
-            System.out.println("Error while retrieving search...");
-            }
+            System.out.println("AdminController initialize completed.");
 
+        } catch (Exception e) {
+            System.out.println("Error while retrieving admin flight table: " + e.getMessage());
         }
+    }
+
+    @FXML
+    void refreshTable(MouseEvent event) {
+        loadAllFlights();
+    }
 
     @FXML
     void addFlightClick(MouseEvent event) {
@@ -191,7 +206,7 @@ public class AdminController implements Initializable {
         try {
             price = Double.parseDouble(priceGrab);
         } catch (NumberFormatException e) {
-            statusLabel.setText("Price format invalid");
+            statusLabel.setText("Invalid price format.");
             return;
         }
 
@@ -199,6 +214,7 @@ public class AdminController implements Initializable {
         vo.setAction("adminAddFlight");
 
         Flight flight = vo.getFlight();
+
         flight.setDepartureLocation(departure);
         flight.setArrivalLocation(arrival);
         flight.setFlightDuration(duration);
@@ -212,6 +228,7 @@ public class AdminController implements Initializable {
 
             if (vo.operationResult) {
                 statusLabel.setText("Flight added successfully");
+                loadAllFlights();
             } else {
                 statusLabel.setText("Failed to add flight");
             }
@@ -225,11 +242,80 @@ public class AdminController implements Initializable {
     @FXML
     void removeFlightClickSt(MouseEvent event) {
 
+        Flight selected = tableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            statusLabel.setText("No flight selected.");
+            return;
+        }
+
+        ValueObject vo = new ValueObject();
+        vo.setAction("adminRemoveFlight");
+        vo.setFlight(selected);
+
+        try {
+            Facade.process(vo);
+
+            if (vo.operationResult) {
+                statusLabel.setText("Flight removed.");
+                loadAllFlights();
+            } else {
+                statusLabel.setText("Failed to remove.");
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error: " + e.getMessage());
+        }
     }
 
     @FXML
     void updateFlightClick(MouseEvent event) {
 
+        Flight selected = tableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            statusLabel.setText("No flight selected.");
+            return;
+        }
+
+        String departure = departLocTextBox.getText();
+        String arrival = arrivalLocationTextBox.getText();
+        String duration = flightDurTextBox.getText();
+        String date = departureDateTextBox.getText();
+        String priceGrab = priceTextBox.getText();
+        String departureTime = departureTimeTextbox.getText();
+        String arrivalTime = arrivalTimeTextbox.getText();
+
+        if (!departure.isEmpty()) selected.setDepartureLocation(departure);
+        if (!departureTime.isEmpty()) selected.setDepartureTime(departureTime);
+        if (!arrival.isEmpty()) selected.setArrivalLocation(arrival);
+        if (!arrivalTime.isEmpty()) selected.setArrivalTime(arrivalTime);
+        if (!duration.isEmpty()) selected.setFlightDuration(duration);
+        if (!date.isEmpty()) selected.setDepartureDate(date);
+        if (!priceGrab.isEmpty()) {
+            try {
+                double price = Double.parseDouble(priceGrab);
+                selected.setPrice(price);
+            } catch (NumberFormatException e) {
+                statusLabel.setText("Invalid price format.");
+                return;
+            }
+        }
+
+        ValueObject vo = new ValueObject();
+        vo.setFlight(selected);
+        vo.setAction("adminUpdateFlight");
+
+        try {
+            Facade.process(vo);
+            if (vo.operationResult) {
+                statusLabel.setText("Flight updated successfully.");
+                loadAllFlights();
+            } else {
+                statusLabel.setText("Failed to update flight.");
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error: " + e.getMessage());
+        }
     }
 
 //searching flights based on textboxes in UI
@@ -347,7 +433,7 @@ public class AdminController implements Initializable {
             System.out.println("Error loading flights: " + e.getMessage());
         }
     }
-    }
+}
 
 
 

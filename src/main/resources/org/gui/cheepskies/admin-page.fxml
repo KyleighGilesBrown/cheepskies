@@ -19,22 +19,26 @@
       <Label fx:id="departDateLabel" layoutX="261.0" layoutY="248.0" prefHeight="17.0" prefWidth="85.0" text="Depature Date:" />
       <TextField fx:id="flightIdTextBox" layoutX="355.0" layoutY="85.0" />
       <TextField fx:id="departLocTextBox" layoutX="355.0" layoutY="125.0" />
-      <TableView fx:id="tableView" layoutX="18.0" layoutY="410.0" prefHeight="292.0" prefWidth="972.0">
-        <columns>
-          <TableColumn fx:id="flightid" prefWidth="162.0" text="FlightID" />
-          <TableColumn fx:id="departurelocation" prefWidth="162.0" text="Departure Location" />
-            <TableColumn fx:id="arrivallocation" prefWidth="162.0" text="Arrival Location" />
-            <TableColumn fx:id="flightduration" prefWidth="162.0" text="Flight Duration" />
-            <TableColumn fx:id="departuredate" prefWidth="162.0" text="Depature Date" />
-            <TableColumn fx:id="price" prefWidth="162.0" text="Price" />
-        </columns>
-      </TableView>
-      <Button fx:id="toMainMenuButton" layoutX="916.0" layoutY="8.0" mnemonicParsing="false" onMouseClicked="#returnToMainMenu" text="Main Menu" />
       <TextField fx:id="arrivalLocationTextBox" layoutX="355.0" layoutY="165.0" />
       <TextField fx:id="flightDurTextBox" layoutX="355.0" layoutY="204.0" />
       <TextField fx:id="departureDateTextBox" layoutX="355.0" layoutY="243.0" />
-      <Label fx:id="priceLabel" layoutX="311.0" layoutY="286.0" prefHeight="17.0" prefWidth="34.0" text="Price:" />
       <TextField fx:id="priceTextBox" layoutX="355.0" layoutY="282.0" />
+      <TextField fx:id="departureTimeTextbox" layoutX="355.0" layoutY="321.0" />
+      <TextField fx:id="arrivalTimeTextbox" layoutX="355.0" layoutY="360.0" />
+      <TableView fx:id="tableView" layoutX="14.0" layoutY="416.0" prefHeight="292.0" prefWidth="978.0">
+        <columns>
+          <TableColumn fx:id="flightid" prefWidth="121.25" text="FlightID" />
+          <TableColumn fx:id="departurelocation" prefWidth="121.25" text="Departure Location" />
+            <TableColumn fx:id="arrivallocation" prefWidth="121.25" text="Arrival Location" />
+            <TableColumn fx:id="flightduration" prefWidth="121.25" text="Flight Duration" />
+            <TableColumn fx:id="departuredate" prefWidth="121.25" text="Depature Date" />
+            <TableColumn fx:id="price" prefWidth="121.25" text="Price" />
+            <TableColumn fx:id="departuretime" prefWidth="121.25" text="Departure Time" />
+            <TableColumn fx:id="arrivaltime" prefWidth="122.0" text="Arrival Time" />
+        </columns>
+      </TableView>
+      <Button fx:id="toMainMenuButton" layoutX="916.0" layoutY="8.0" mnemonicParsing="false" onMouseClicked="#returnToMainMenu" text="Main Menu" />
+      <Label fx:id="priceLabel" layoutX="311.0" layoutY="286.0" prefHeight="17.0" prefWidth="34.0" text="Price:" />
       <Button fx:id="adminRemoveFlightSt" layoutX="553.0" layoutY="243.0" mnemonicParsing="false" onMouseClicked="#removeFlightClickSt" prefHeight="26.0" prefWidth="131.0" text="Remove Flight" />
       <Button fx:id="adminAddFlight" layoutX="553.0" layoutY="206.0" mnemonicParsing="false" onMouseClicked="#addFlightClick" prefHeight="26.0" prefWidth="131.0" text="Add Flight" />
       <Label fx:id="adminOnlyLabel" layoutX="10.0" layoutY="10.0" text="Admin Only Page">
@@ -43,10 +47,9 @@
          </font>
       </Label>
       <Button fx:id="adminUpdateFlight" layoutX="553.0" layoutY="281.0" mnemonicParsing="false" onMouseClicked="#updateFlightClick" prefHeight="26.0" prefWidth="131.0" text="Update Flight" />
-      <Text fx:id="statusLabel" layoutX="536.0" layoutY="325.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="166.0" />
-      <TextField fx:id="departureTimeTextbox" layoutX="355.0" layoutY="321.0" />
-      <TextField fx:id="arrivalTimeTextbox" layoutX="355.0" layoutY="360.0" />
+      <Text fx:id="statusLabel" layoutX="536.0" layoutY="325.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="166.0" />
       <Label fx:id="departureTime" layoutX="255.0" layoutY="325.0" prefHeight="17.0" prefWidth="91.0" text="Departure Time:" />
       <Label fx:id="arrivalTime" layoutX="274.0" layoutY="365.0" prefHeight="17.0" prefWidth="85.0" text="Arrival Time:" />
+      <Button fx:id="refreshButton" layoutX="860.0" layoutY="379.0" mnemonicParsing="false" onMouseClicked="#refreshTable" prefHeight="26.0" prefWidth="131.0" text="Refresh Table" />
    </children>
 </AnchorPane>

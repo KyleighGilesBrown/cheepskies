@@ -518,13 +518,12 @@ public class DatabaseUtils {
         return flightsReturn;
     }
 
-    public static boolean addFlight(Flight flight) throws SQLException {
+    public static boolean addFlight(Flight flight) {
 
         String query = "INSERT INTO flights (departurelocation, departuretime, arrivallocation, arrivaltime, flightduration, departuredate, price) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnector.dbConnect();
-             PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DatabaseConnector.dbConnect(); PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, flight.getDepartureLocation());
             stmt.setString(2, flight.getDepartureTime());
@@ -549,6 +548,49 @@ public class DatabaseUtils {
 
         } catch (SQLException e) {
             System.out.println("Error inserting flight: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean removeFlight(int flightId) {
+
+        String query = "DELETE FROM flights WHERE flightid = ?";
+
+        try (Connection conn = DatabaseConnector.dbConnect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, flightId);
+            int rows = stmt.executeUpdate();
+
+            return rows > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting flight: " + e.getMessage());
+            return false;
+        }
+
+    }
+
+    public static boolean updateFlight(Flight flight) {
+
+        String query = "UPDATE flights SET departurelocation = ?, departuretime = ?, arrivallocation = ?, arrivaltime = ?, flightduration = ?, departuredate = ?, price = ? WHERE flightid = ?";
+
+        try (Connection conn = DatabaseConnector.dbConnect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, flight.getDepartureLocation());
+            stmt.setString(2, flight.getDepartureTime());
+            stmt.setString(3, flight.getArrivalLocation());
+            stmt.setString(4, flight.getArrivalTime());
+            stmt.setString(5, flight.getFlightDuration());
+            stmt.setString(6, flight.getDepartureDate());
+            stmt.setDouble(7, flight.getPrice());
+            stmt.setInt(8, flight.getFlightId());
+
+            int rows = stmt.executeUpdate();
+
+            return rows > 0;
+
+        } catch (Exception e) {
+            System.out.println("Error updating flight: " + e.getMessage());
             return false;
         }
     }

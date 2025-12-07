@@ -22,8 +22,6 @@ public class Facade {
                 case "removeFlight":
                     vo.operationResult = bizlogic.removeFlightFromCustomer(vo);
                     break;
-                case "updateFlight":
-                    vo.operationResult = bizlogic.updateFlight(vo);
                 case "searchFlight":
                     vo.operationResult = bizlogic.searchFlights(vo);
                     break;
@@ -35,6 +33,12 @@ public class Facade {
                     break;
                 case "adminAddFlight":
                     vo.operationResult = bizlogic.adminAddFlight(vo);
+                    break;
+                case "adminRemoveFlight":
+                    vo.operationResult = bizlogic.adminRemoveFlight(vo);
+                    break;
+                case "adminUpdateFlight":
+                    vo.operationResult = bizlogic.adminUpdateFlight(vo);
                     break;
             }
             // catch block contains the exceptions for our bizlogic functions
@@ -63,6 +67,9 @@ public class Facade {
         } catch (RecoveryQuestionException e) {
             vo.operationResult = false;
             System.out.println("Error recovering password: " + e.getMessage());
+        } catch (UpdateFlightAsAdminException e) {
+            vo.operationResult = false;
+            System.out.println("Error updating flight: " + e.getMessage());
         } catch (Exception e) {
             vo.operationResult = false;
             System.out.println("Unexpected error: " + e.getMessage());

@@ -28,13 +28,13 @@
       <TableView fx:id="tableView" layoutX="14.0" layoutY="416.0" prefHeight="292.0" prefWidth="978.0">
         <columns>
           <TableColumn fx:id="flightid" prefWidth="121.25" text="FlightID" />
-          <TableColumn fx:id="departurelocation" prefWidth="121.25" text="Departure Location" />
-            <TableColumn fx:id="arrivallocation" prefWidth="121.25" text="Arrival Location" />
-            <TableColumn fx:id="flightduration" prefWidth="121.25" text="Flight Duration" />
-            <TableColumn fx:id="departuredate" prefWidth="121.25" text="Depature Date" />
-            <TableColumn fx:id="price" prefWidth="121.25" text="Price" />
-            <TableColumn fx:id="departuretime" prefWidth="121.25" text="Departure Time" />
-            <TableColumn fx:id="arrivaltime" prefWidth="122.0" text="Arrival Time" />
+          <TableColumn fx:id="departurelocation" prefWidth="122.25" text="Departure Location" />
+            <TableColumn fx:id="arrivallocation" prefWidth="122.25" text="Arrival Location" />
+            <TableColumn fx:id="flightduration" prefWidth="122.25" text="Flight Duration" />
+            <TableColumn fx:id="departuredate" prefWidth="122.25" text="Depature Date" />
+            <TableColumn fx:id="price" prefWidth="122.25" text="Price" />
+            <TableColumn fx:id="departuretime" prefWidth="122.25" text="Departure Time" />
+            <TableColumn fx:id="arrivaltime" prefWidth="122.25" text="Arrival Time" />
         </columns>
       </TableView>
       <Button fx:id="toMainMenuButton" layoutX="916.0" layoutY="8.0" mnemonicParsing="false" onMouseClicked="#returnToMainMenu" text="Main Menu" />

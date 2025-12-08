@@ -17,7 +17,7 @@
             <Font size="75.0" />
          </font>
       </Text>
-   <ImageView fx:id="imageBird" fitHeight="38.0" fitWidth="39.0" layoutX="600.0" layoutY="188.0" pickOnBounds="true" preserveRatio="true">
+   <ImageView fx:id="imageBird" fitHeight="39.0" fitWidth="32.0" layoutX="601.0" layoutY="193.0" pickOnBounds="true" preserveRatio="true">
       <image>
          <Image url="@cheep1.png" />
       </image>

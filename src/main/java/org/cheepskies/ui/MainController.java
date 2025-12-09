@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.cheepskies.common.ValueObject;
 import org.cheepskiesdb.DatabaseConnector;
 import org.cheepskiesdb.DatabaseUtils;
+import org.cheepskiesexceptions.FlightConflictException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -391,7 +392,7 @@ public class MainController implements Initializable {
 
 
     @FXML
-    //adds flights to flightsTableF when add button is pressed
+    //adds flights to flightsTableF (customer flights) when add button is pressed
     public void addFlight(MouseEvent event) {
         Flight selectedFlight = flightsTable.getSelectionModel().getSelectedItem(); //whatever flight is selected
 
@@ -399,6 +400,8 @@ public class MainController implements Initializable {
             System.out.println("No flight selected to add.");
             return;
         }
+
+
 // DEBUG: Check what currentUserId is
         System.out.println("DEBUG: currentUserId = " + currentUserId);
 
@@ -410,9 +413,43 @@ public class MainController implements Initializable {
         customer.setCustomerId(currentUserId);
         vo.setCustomer(customer);
 
-        try {
-            Facade.process(vo);//facade process is run with set flight and customer
 
+
+        try {
+
+            //conflict checking
+
+            int timeDepSel;
+            int timeArrSel;
+
+            String departureTime = selectedFlight.getDepartureTime().replace(":","");
+            timeDepSel = Integer.parseInt(departureTime);
+
+            String arrivalTime = selectedFlight.getArrivalTime().replace(":","");
+            timeArrSel = Integer.parseInt(arrivalTime);
+
+            int timeDepVO;
+            int timeArrVO;
+
+            for (int i = 0; i < userFlights.size(); i++) {
+                    Flight existingFlight = userFlights.get(i);
+                if (selectedFlight.getDepartureDate().equals(existingFlight.getDepartureDate())) {
+
+                    String departureTimeL = existingFlight.getDepartureTime().replace(":","");
+                    timeDepVO = Integer.parseInt(departureTimeL);
+
+                    String arrivalTimeL = existingFlight.getArrivalTime().replace(":","");
+                    timeArrVO = Integer.parseInt(arrivalTimeL);
+
+
+                    if (timeArrVO >= timeDepSel && timeDepSel >= timeDepVO || timeArrSel >= timeDepVO && timeDepVO >= timeDepSel || timeDepVO == timeDepSel) {
+                        throw new FlightConflictException ("Flight Conflict, please select another flight.");
+                    }
+
+                }
+
+            }
+            Facade.process(vo);//facade process is run with set flight and customer
             /* boolean operation result of bizlogic.addFlightToCustomer */
             if (vo.operationResult) {
                 userFlights.add(selectedFlight);
@@ -420,8 +457,10 @@ public class MainController implements Initializable {
             } else {
                 System.err.println("Failed to add flight.");
             }
-
-        } catch (Exception e) {
+        } catch(FlightConflictException e) {
+            System.err.println("Flight Conflict, please select another flight" + e.getMessage());
+        }
+        catch (Exception e) {
             System.err.println("Error during add flight: " + e.getMessage());
         }
     }
@@ -513,83 +552,6 @@ public class MainController implements Initializable {
 //second table search button on main menu
     @FXML
     void searchFlights2(MouseEvent event) {
-//        try {
-//            // Get user input from text fields
-//            String flightId = flightIdTextBox1.getText().trim();
-//            String departLoc = departLocTextBox1.getText().trim();
-//            String arrivalLoc = arrivalLocationTextBox1.getText().trim();
-//            String departDate = departureDateTextBox1.getText().trim();
-//            String flightDur = flightDurTextBox1.getText().trim();
-//            String priceStr = priceTextBox1.getText().trim();
-//
-//            // Building the SQL query dynamically with placeholders
-//            StringBuilder query = new StringBuilder("SELECT f.* FROM flights f " +
-//                    "JOIN flight_customer fc ON f.flightid = fc.flightid " +
-//                    "WHERE fc.customer_id = " + currentUserId);
-//
-//            List<String> parameters = new ArrayList<>();
-//
-////            Flight flight = new Flight(arrivalLoc, departLoc, flightId, priceStr, departDate, flightDur); ???
-//            if (!flightId.isEmpty()) {
-//                query.append(" AND f.flightid = ?");
-//                parameters.add(flightId);
-//            }
-//            if (!departLoc.isEmpty()) {
-//                query.append(" AND f.departurelocation = ?");
-//                parameters.add(departLoc);
-//            }
-//            if (!arrivalLoc.isEmpty()) {
-//                query.append(" AND f.arrivallocation = ?");
-//                parameters.add(arrivalLoc);
-//            }
-//            if (!departDate.isEmpty()) {
-//                query.append(" AND f.departuredate = ?");
-//                parameters.add(departDate);
-//            }
-//            if (!flightDur.isEmpty()) {
-//                query.append(" AND f.flightduration = ?");
-//                parameters.add(flightDur);
-//            }
-//            if (!priceStr.isEmpty()) {
-//                query.append(" AND f.price = ?");
-//                parameters.add(priceStr);
-//            }
-
-//            ValueObject vo = new ValueObject();
-//            Customer customer = new Customer();
-//
-//            customer.setCustomerId(currentUserId);
-//            vo.setCustomer(customer);
-//
-//            DatabaseConnector db = new DatabaseConnector();
-//
-//            // Execute the query with parameters
-//            ResultSet rs = db.executePreparedQuery(query.toString(), parameters);
-//
-//            // Create a list to hold the results
-//            ObservableList<Flight> flightList = FXCollections.observableArrayList();
-//
-//            // Loop through results and create Flight objects
-//            while (rs.next()) {
-//                Flight flight = new Flight(
-//                        rs.getString("departurelocation"),
-//                        rs.getString("departuretime"),
-//                        rs.getString("arrivallocation"),
-//                        rs.getString("arrivaltime"),
-//                        rs.getString("flightduration"),
-//                        rs.getString("departuredate"),
-//                        rs.getDouble("price")
-//                );
-//                flight.setFlightId(rs.getInt("flightid"));
-//                flightList.add(flight);
-//
-//            }
-//
-//            // Display results in the table
-//            flightsTableF.setItems(flightList);
-//
-//        } catch (Exception e) {
-//           e.printStackTrace();
         ValueObject vo = new ValueObject();
         vo.setAction("searchFlight"); //switch case from facade
 

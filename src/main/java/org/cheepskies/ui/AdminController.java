@@ -128,6 +128,7 @@ public class AdminController implements Initializable {
         this.currentUserId = userId;
         System.out.println("DEBUG: AdminController received userId = " + userId);
     }
+
     @FXML
     void returnToMainMenu(MouseEvent event) {
 
@@ -155,7 +156,7 @@ public class AdminController implements Initializable {
         System.out.println("AdminController initialize started...");
 
         try {
-            // Match column names EXACTLY to the Flight getters
+
 
             flightid.setCellValueFactory(new PropertyValueFactory<>("flightId"));
             price.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -198,7 +199,21 @@ public class AdminController implements Initializable {
 
             statusLabel.setText("Missing fields");
             return;
+        }
 
+        if (!isValidTime(departureTime)) {
+            statusLabel.setText("Invalid departure time format (hh:mm)");
+            return;
+        }
+
+        if (!isValidTime(arrivalTime)) {
+            statusLabel.setText("Invalid arrival time format (hh:mm)");
+            return;
+        }
+
+        if (!isValidDate(date)) {
+            statusLabel.setText("Invalid date format (mm-dd-yyyy)");
+            return;
         }
 
         double price;
@@ -238,7 +253,6 @@ public class AdminController implements Initializable {
         }
     }
 
-//displays warning message, does not delete with this button
     @FXML
     void removeFlightClickSt(MouseEvent event) {
 
@@ -285,16 +299,37 @@ public class AdminController implements Initializable {
         String departureTime = departureTimeTextbox.getText();
         String arrivalTime = arrivalTimeTextbox.getText();
 
+        if (!departureTime.isEmpty()) {
+            if (!isValidTime(departureTime)) {
+                statusLabel.setText("Invalid departure time format (hh:mm)");
+                return;
+            }
+            selected.setDepartureTime(departureTime);
+        }
+
+        if (!arrivalTime.isEmpty()) {
+            if (!isValidTime(arrivalTime)) {
+                statusLabel.setText("Invalid arrival time format (hh:mm)");
+                return;
+            }
+            selected.setArrivalTime(arrivalTime);
+        }
+
+        if (!date.isEmpty()) {
+            if (!isValidDate(date)) {
+                statusLabel.setText("Invalid date format (mm-dd-yyyy)");
+                return;
+            }
+            selected.setDepartureDate(date);
+        }
+
         if (!departure.isEmpty()) selected.setDepartureLocation(departure);
-        if (!departureTime.isEmpty()) selected.setDepartureTime(departureTime);
         if (!arrival.isEmpty()) selected.setArrivalLocation(arrival);
-        if (!arrivalTime.isEmpty()) selected.setArrivalTime(arrivalTime);
         if (!duration.isEmpty()) selected.setFlightDuration(duration);
-        if (!date.isEmpty()) selected.setDepartureDate(date);
+
         if (!priceGrab.isEmpty()) {
             try {
-                double price = Double.parseDouble(priceGrab);
-                selected.setPrice(price);
+                selected.setPrice(Double.parseDouble(priceGrab));
             } catch (NumberFormatException e) {
                 statusLabel.setText("Invalid price format.");
                 return;
@@ -318,7 +353,7 @@ public class AdminController implements Initializable {
         }
     }
 
-//searching flights based on textboxes in UI
+    //searching flights based on textboxes in UI
     @FXML
     void searchFlightsClick(MouseEvent event) {
         try {
@@ -359,7 +394,6 @@ public class AdminController implements Initializable {
                 query.append(" AND price = ?");
                 parameters.add(priceStr);
             }
-
 
 
             DatabaseConnector db = new DatabaseConnector();
@@ -432,6 +466,58 @@ public class AdminController implements Initializable {
         } catch (SQLException e) {
             System.out.println("Error loading flights: " + e.getMessage());
         }
+    }
+
+    //helper methods for format validation
+    private boolean isValidTime(String time) {
+
+        if (time == null || time.length() != 5) return false;
+        if (time.charAt(2) != ':') return false;
+
+        char h1 = time.charAt(0);
+        char h2 = time.charAt(1);
+        char m1 = time.charAt(3);
+        char m2 = time.charAt(4);
+
+        if (!Character.isDigit(h1) || !Character.isDigit(h2)) return false;
+        if (!Character.isDigit(m1) || !Character.isDigit(m2)) return false;
+
+        int hour = (h1 - '0') * 10 + (h2 - '0');
+        int minute = (m1 - '0') * 10 + (m2 - '0');
+
+        if (hour < 0 || hour > 23) return false;
+        if (minute < 0 || minute > 59) return false;
+
+        return true;
+    }
+
+    //helper methods for format validation
+    private boolean isValidDate(String date) {
+        if (date == null || date.length() != 10) return false;
+        if (date.charAt(2) != '-' || date.charAt(5) != '-') return false;
+
+        char m1 = date.charAt(0);
+        char m2 = date.charAt(1);
+        char d1 = date.charAt(3);
+        char d2 = date.charAt(4);
+
+        if (!Character.isDigit(m1) || !Character.isDigit(m2)) return false;
+        if (!Character.isDigit(d1) || !Character.isDigit(d2)) return false;
+
+        for (int i = 6; i < 10; i++) {
+            if (!Character.isDigit(date.charAt(i))) return false;
+        }
+
+        int month = (m1 - '0') * 10 + (m2 - '0');
+        int day = (d1 - '0') * 10 + (d2 - '0');
+        int year = Integer.parseInt(date.substring(6, 10));
+
+        if (month < 1 || month > 12) return false;
+        if (day < 1 || day > 31) return false;
+        if (year <= 0) return false;
+
+        return true;
+
     }
 }
 

@@ -85,5 +85,6 @@
             <Font size="25.0" />
          </font>
       </Label>
+      <Label fx:id="statusLabel" layoutX="458.0" layoutY="300.0" prefHeight="17.0" prefWidth="530.0" text="                                                                                Status..." textAlignment="CENTER" />
    </children>
 </AnchorPane>

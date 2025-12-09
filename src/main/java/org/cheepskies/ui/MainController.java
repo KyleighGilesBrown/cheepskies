@@ -29,6 +29,8 @@ import static org.cheepskiesdb.DatabaseConnector.dbConnect;
 public class MainController implements Initializable {
     @FXML
     private Label planeEmoji1;
+    @FXML
+    private Label statusLabel;
 
     @FXML
     private Label planeEmoji2;
@@ -388,6 +390,7 @@ public class MainController implements Initializable {
             loadUserFlights();
         }
         System.out.println("Tables refreshed.");
+        statusLabel.setText("Tables refreshed.");
     }
 
 
@@ -398,6 +401,7 @@ public class MainController implements Initializable {
 
         if (selectedFlight == null) {
             System.out.println("No flight selected to add.");
+            statusLabel.setText("No flight selected to add.");
             return;
         }
 
@@ -412,7 +416,7 @@ public class MainController implements Initializable {
         Customer customer = new Customer();
         customer.setCustomerId(currentUserId);
         vo.setCustomer(customer);
-
+//why value object here?
 
 
         try {
@@ -454,14 +458,18 @@ public class MainController implements Initializable {
             if (vo.operationResult) {
                 userFlights.add(selectedFlight);
                 System.err.println("Flight " + selectedFlight.getFlightId() + " added successfully.");
+                statusLabel.setText("Flight " + selectedFlight.getFlightId() + " added successfully.");
             } else {
                 System.err.println("Failed to add flight.");
             }
         } catch(FlightConflictException e) {
             System.err.println("Flight Conflict, please select another flight" + e.getMessage());
+            statusLabel.setText("Flight Conflict, please select another flight");
+
         }
         catch (Exception e) {
             System.err.println("Error during add flight: " + e.getMessage());
+            statusLabel.setText("Error during add flight: " + e.getMessage());
         }
     }
 
@@ -473,6 +481,7 @@ public class MainController implements Initializable {
 
         if (selectedFlight == null) {
             System.out.println("No flight selected to remove.");
+            statusLabel.setText("No flights selected to remove.");
             return;
         }
 
@@ -491,8 +500,10 @@ public class MainController implements Initializable {
             if (vo.operationResult) {
                 userFlights.remove(selectedFlight); //removes flight from observablelist
                 System.out.println("Flight " + selectedFlight.getFlightId() + " removed successfully.");
+                statusLabel.setText("Flight " + selectedFlight.getFlightId() + " removed successfully.");
             } else {
                 System.err.println("Failed to remove flight.");
+                statusLabel.setText("Failed to remove flight.");
             }
 
         } catch (Exception e) {
@@ -531,9 +542,8 @@ public class MainController implements Initializable {
 
         ValueObject vo = new ValueObject();
         vo.setAction("searchFlight"); //switch case from facade
-
         try {
-
+            statusLabel.setText("found the above flights"); //seeing process
             //gets returned flights from db utils and puts it in arraylist "flights"
             ArrayList<Flight> flights = DatabaseUtils.searchAllFlights(flightIdStr, departLoc, arrivalLoc, departDate, flightDur, priceStr);
             //get flights and store in vo

@@ -253,11 +253,6 @@ public class MainController implements Initializable {
     public void adminCheck(int custId) {
         //preparing query for prepared statement
         String query = "SELECT admin FROM customers WHERE customer_id = ?";
-        //assigning current customer logged in to value object, also getting custID for verification of admin in prepared statement
-        ValueObject vo = new ValueObject();
-        Customer cust = new Customer();
-        vo.setCustomer(cust);
-        Facade.process(vo);
 
         try (Connection connection = dbConnect();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -416,7 +411,6 @@ public class MainController implements Initializable {
         Customer customer = new Customer();
         customer.setCustomerId(currentUserId);
         vo.setCustomer(customer);
-//why value object here?
 
 
         try {

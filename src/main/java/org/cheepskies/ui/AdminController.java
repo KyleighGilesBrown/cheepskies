@@ -186,6 +186,7 @@ public class AdminController implements Initializable {
     @FXML
     void addFlightClick(MouseEvent event) {
 
+        // grabs textbox content
         String departure = departLocTextBox.getText();
         String arrival = arrivalLocationTextBox.getText();
         String duration = flightDurTextBox.getText();
@@ -194,6 +195,7 @@ public class AdminController implements Initializable {
         String departureTime = departureTimeTextbox.getText();
         String arrivalTime = arrivalTimeTextbox.getText();
 
+        // checks if any boxes are empty
         if (departure.isEmpty() || arrival.isEmpty() || duration.isEmpty() || date.isEmpty() ||
                 priceGrab.isEmpty() || departureTime.isEmpty() || arrivalTime.isEmpty()) {
 
@@ -201,6 +203,7 @@ public class AdminController implements Initializable {
             return;
         }
 
+        // format checks
         if (!isValidTime(departureTime)) {
             statusLabel.setText("Invalid departure time format (hh:mm)");
             return;
@@ -218,6 +221,7 @@ public class AdminController implements Initializable {
 
         double price;
 
+        // parses double from String
         try {
             price = Double.parseDouble(priceGrab);
         } catch (NumberFormatException e) {
@@ -230,6 +234,7 @@ public class AdminController implements Initializable {
 
         Flight flight = vo.getFlight();
 
+        // setters for flight object
         flight.setDepartureLocation(departure);
         flight.setArrivalLocation(arrival);
         flight.setFlightDuration(duration);
@@ -238,9 +243,11 @@ public class AdminController implements Initializable {
         flight.setDepartureTime(departureTime);
         flight.setArrivalTime(arrivalTime);
 
+        // passing to facade
         try {
             Facade.process(vo);
 
+            // operation result check
             if (vo.operationResult) {
                 statusLabel.setText("Flight added successfully");
                 loadAllFlights();
@@ -256,20 +263,25 @@ public class AdminController implements Initializable {
     @FXML
     void removeFlightClickSt(MouseEvent event) {
 
+        // flight object of selected flight
         Flight selected = tableView.getSelectionModel().getSelectedItem();
 
+        // selection check
         if (selected == null) {
             statusLabel.setText("No flight selected.");
             return;
         }
 
+        // value object block
         ValueObject vo = new ValueObject();
         vo.setAction("adminRemoveFlight");
         vo.setFlight(selected);
 
+        // passing to facade
         try {
             Facade.process(vo);
 
+            // operation result check
             if (vo.operationResult) {
                 statusLabel.setText("Flight removed.");
                 loadAllFlights();
@@ -284,6 +296,7 @@ public class AdminController implements Initializable {
     @FXML
     void updateFlightClick(MouseEvent event) {
 
+        // flight object of selected flight
         Flight selected = tableView.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
@@ -291,6 +304,7 @@ public class AdminController implements Initializable {
             return;
         }
 
+        // grabs textbox content
         String departure = departLocTextBox.getText();
         String arrival = arrivalLocationTextBox.getText();
         String duration = flightDurTextBox.getText();
@@ -299,6 +313,7 @@ public class AdminController implements Initializable {
         String departureTime = departureTimeTextbox.getText();
         String arrivalTime = arrivalTimeTextbox.getText();
 
+        // checks if user inputted departure time, then checks format
         if (!departureTime.isEmpty()) {
             if (!isValidTime(departureTime)) {
                 statusLabel.setText("Invalid departure time format (hh:mm)");
@@ -307,6 +322,7 @@ public class AdminController implements Initializable {
             selected.setDepartureTime(departureTime);
         }
 
+        // checks if user inputted arrival time, then checks format
         if (!arrivalTime.isEmpty()) {
             if (!isValidTime(arrivalTime)) {
                 statusLabel.setText("Invalid arrival time format (hh:mm)");
@@ -315,6 +331,7 @@ public class AdminController implements Initializable {
             selected.setArrivalTime(arrivalTime);
         }
 
+        // checks if user inputted date, then checks format
         if (!date.isEmpty()) {
             if (!isValidDate(date)) {
                 statusLabel.setText("Invalid date format (mm-dd-yyyy)");
@@ -323,10 +340,12 @@ public class AdminController implements Initializable {
             selected.setDepartureDate(date);
         }
 
+        // content checks
         if (!departure.isEmpty()) selected.setDepartureLocation(departure);
         if (!arrival.isEmpty()) selected.setArrivalLocation(arrival);
         if (!duration.isEmpty()) selected.setFlightDuration(duration);
 
+        // checks price, then parses double, checking for proper price format
         if (!priceGrab.isEmpty()) {
             try {
                 selected.setPrice(Double.parseDouble(priceGrab));
@@ -336,10 +355,12 @@ public class AdminController implements Initializable {
             }
         }
 
+        // vo block
         ValueObject vo = new ValueObject();
         vo.setFlight(selected);
         vo.setAction("adminUpdateFlight");
 
+        // passes to facade
         try {
             Facade.process(vo);
             if (vo.operationResult) {

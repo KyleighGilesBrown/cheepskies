@@ -349,11 +349,11 @@ public class DatabaseUtils {
     public static ArrayList<Flight> searchAllFlights(String flightIdStr, String departLoc, String arrivalLoc, String departDate, String flightDur, String priceStr) {
         ArrayList<Flight> flightsReturn = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT * FROM flights WHERE 1=1");
-//dynamically building query to check for empty textboxes. Shows all flights if all are empty since no appending to statement happens.
+        //dynamically building query to check for empty textboxes. Shows all flights if all are empty since no appending to statement happens.
 
         //using incremental index incase not all textboxes have input (index starts at 1, then ends at value = to number of inputs)
         int index = 1;
-//establishing db connection, using connection to create empty prepared statement. (.toString() from StringBuilder(dynamic String))
+        //establishing db connection, using connection to create empty prepared statement. (.toString() from StringBuilder(dynamic String))
 
             //index using post-increment so it starts at 1, then increments to 2 for next usage and so on...
             if (!flightIdStr.isEmpty()) {

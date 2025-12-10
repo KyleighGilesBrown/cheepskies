@@ -503,11 +503,6 @@ public class AdminController implements Initializable {
         if (!Character.isDigit(h1) || !Character.isDigit(h2)) return false;
         if (!Character.isDigit(m1) || !Character.isDigit(m2)) return false;
 
-        int hour = (h1 - '0') * 10 + (h2 - '0');
-        int minute = (m1 - '0') * 10 + (m2 - '0');
-
-        if (hour < 0 || hour > 23) return false;
-        if (minute < 0 || minute > 59) return false;
 
         return true;
     }
@@ -529,13 +524,6 @@ public class AdminController implements Initializable {
             if (!Character.isDigit(date.charAt(i))) return false;
         }
 
-        int month = (m1 - '0') * 10 + (m2 - '0');
-        int day = (d1 - '0') * 10 + (d2 - '0');
-        int year = Integer.parseInt(date.substring(6, 10));
-
-        if (month < 1 || month > 12) return false;
-        if (day < 1 || day > 31) return false;
-        if (year <= 0) return false;
 
         return true;
 

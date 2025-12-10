@@ -537,7 +537,6 @@ public class MainController implements Initializable {
         ValueObject vo = new ValueObject();
         vo.setAction("searchFlight"); //switch case from facade
         try {
-            statusLabel.setText("found the above flights"); //seeing process
             //gets returned flights from db utils and puts it in arraylist "flights"
             ArrayList<Flight> flights = DatabaseUtils.searchAllFlights(flightIdStr, departLoc, arrivalLoc, departDate, flightDur, priceStr);
             //get flights and store in vo
@@ -548,6 +547,8 @@ public class MainController implements Initializable {
             ObservableList<Flight> flightList = FXCollections.observableArrayList(flights);
             // Display results in the 1st table
             flightsTable.setItems(flightList);
+            statusLabel.setText("found the above flights"); //seeing process
+
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
